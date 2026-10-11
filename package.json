@@ -1,0 +1,108 @@
+{
+  "name": "n8n-nodes-feishu-suite",
+  "version": "1.0.0",
+  "description": "Full-featured Feishu/Lark community nodes for n8n, including messages, bitable, docs, approval, tasks, mail, minutes, VC, search and attendance.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "n8n-node",
+    "feishu",
+    "lark",
+    "larksuite",
+    "飞书"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/RandallAnjie/n8n-nodes-feishu-suite#readme",
+  "author": {
+    "name": "RandallAnjie"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RandallAnjie/n8n-nodes-feishu-suite.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rimraf dist && tsc && gulp build:icons && npx rimraf dist/package.json dist/tsconfig.tsbuildinfo dist/__tests__",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "enumerate": "node scripts/enumerate-operations.js",
+    "test": "jest"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/FeishuSuiteApi.credentials.js",
+      "dist/credentials/FeishuSuiteOAuth2Api.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/FeishuSuite/FeishuSuite.node.js",
+      "dist/nodes/FeishuSuiteBase/FeishuSuiteBase.node.js",
+      "dist/nodes/FeishuSuiteCalendar/FeishuSuiteCalendar.node.js",
+      "dist/nodes/FeishuSuiteChat/FeishuSuiteChat.node.js",
+      "dist/nodes/FeishuSuiteContacts/FeishuSuiteContacts.node.js",
+      "dist/nodes/FeishuSuiteDocument/FeishuSuiteDocument.node.js",
+      "dist/nodes/FeishuSuiteMessage/FeishuSuiteMessage.node.js",
+      "dist/nodes/FeishuSuiteSpace/FeishuSuiteSpace.node.js",
+      "dist/nodes/FeishuSuiteSpreadsheet/FeishuSuiteSpreadsheet.node.js",
+      "dist/nodes/FeishuSuiteTask/FeishuSuiteTask.node.js",
+      "dist/nodes/FeishuSuiteWiki/FeishuSuiteWiki.node.js",
+      "dist/nodes/FeishuSuiteApproval/FeishuSuiteApproval.node.js",
+      "dist/nodes/FeishuSuiteMail/FeishuSuiteMail.node.js",
+      "dist/nodes/FeishuSuiteMinutes/FeishuSuiteMinutes.node.js",
+      "dist/nodes/FeishuSuiteVc/FeishuSuiteVc.node.js",
+      "dist/nodes/FeishuSuiteAttendance/FeishuSuiteAttendance.node.js",
+      "dist/nodes/FeishuSuiteAily/FeishuSuiteAily.node.js",
+      "dist/nodes/FeishuSuiteSearch/FeishuSuiteSearch.node.js",
+      "dist/nodes/FeishuSuite/FeishuSuiteTrigger.node.js",
+      "dist/nodes/FeishuSuite/FeishuSuiteWebhookTrigger.node.js",
+      "dist/nodes/FeishuSuite/RespondToFeishuSuite.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^22.15.21",
+    "@types/sanitize-html": "^2.16.0",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/parser": "~8.35.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.1",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^1.82.0",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.2.6",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "form-data": "^4.0.6",
+    "isbot": "^5.1.32",
+    "luxon": "^3.7.2",
+    "protobufjs": "^7.6.3",
+    "sanitize-html": "^2.17.0",
+    "ws": "^8.21.0"
+  },
+  "overrides": {
+    "pkce-challenge": "4.0.0",
+    "lodash": "^4.17.24",
+    "form-data": "^4.0.6",
+    "postcss": "^8.5.10"
+  },
+  "peerDependencies": {
+    "n8n-workflow": ">=1.0.0"
+  }
+}

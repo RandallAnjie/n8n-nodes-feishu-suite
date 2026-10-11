@@ -1,0 +1,50 @@
+n8n-nodes-feishu-suite
+Copyright (c) 2026 RandallAnjie
+
+This package is an independent, standalone n8n community node. It is not a
+GitHub fork of any upstream repository. Source files were copied and then
+modified under the MIT License.
+
+Upstream MIT-licensed works incorporated or used as references:
+
+1. @snae/n8n-nodes-feishu (v2.3.1)
+   https://github.com/imsnae/n8n-nodes-feishu
+   Copyright (c) snae
+   Baseline architecture (ResourceFactory, one-file-per-operation), most of
+   the original 178 operations, long-connection trigger, webhook trigger,
+   and respond node.
+
+2. @luka-cat-mimi/n8n-nodes-feishu
+   https://github.com/luka-n8n-nodes/n8n-nodes-feishu
+   Copyright (c) luka-cat
+   Bitable upsert / row-exists / URL parse / batch field save helpers,
+   Drive chunked upload, folder meta, subscribe/unsubscribe, upload-by-URL,
+   event decrypt, wiki hierarchy helper, contacts search, and Aily skill/file ops.
+
+3. n8n-nodes-feishu-api
+   https://github.com/SealinGp/n8n-nodes-feishu-api
+   Copyright (c) SealinGp
+   Approval instance create/get and task list / tasklist task listing.
+
+4. n8n-nodes-feishu-lark
+   https://github.com/zhgqthomas/n8n-nodes-feishu-lark
+   Copyright (c) zhgqthomas
+   Streaming card / send-and-wait / markdown-HTML block convert patterns
+   already present in snae; used as a completeness check.
+
+5. n8n-nodes-feishu-lite
+   https://github.com/other-blowsnow/n8n-nodes-feishu-lite
+   Copyright (c) blowsnow
+   Spreadsheet auto-write / prepend and bitable field batch-save ideas.
+   The ResourceFactory architecture originated here.
+
+6. n8n-nodes-lark-global
+   https://github.com/ariesho2903/n8n-nodes-lark-global
+   Copyright (c) ariesho2903
+   Reviewed for unique operations. It is a Lark-only rebrand of
+   n8n-nodes-feishu-lark and did not add extra Open API operations beyond
+   MCP helpers (not ported).
+
+Official API references:
+- https://open.feishu.cn/document/
+- https://open.larksuite.com/document/
