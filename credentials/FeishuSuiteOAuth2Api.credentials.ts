@@ -1,4 +1,4 @@
-import type { Icon, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 import { BaseUrl, Credentials } from '../nodes/help/type/enums';
 
 export class FeishuSuiteOAuth2Api implements ICredentialType {
@@ -132,21 +132,7 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 		},
 	];
 
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.url === "custom" ? $credentials.customUrl : $credentials.url}}',
-			url: '/open-apis/authen/v1/user_info',
-			method: 'GET',
-		},
-		rules: [
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					message: 'Invalid or expired user access token (Feishu code 20005). Reconnect OAuth2.',
-					key: 'code',
-					value: 20005,
-				},
-			},
-		],
-	};
+	// Test is FeishuSuite.methods.credentialTest.feishuSuiteOAuth2ApiTest.
+	// A declarative `test` would go through OAuth signing and fail with
+	// "Unable to sign without access token" before we can map Feishu 20005.
 }

@@ -35,7 +35,7 @@ cd ~/.n8n/nodes
 npm install n8n-nodes-feishu-suite
 # 或安装本地 tarball：
 # npm pack /path/to/n8n-nodes-feishu-suite
-# npm install ./n8n-nodes-feishu-suite-0.1.1.tgz
+# npm install ./n8n-nodes-feishu-suite-0.1.2.tgz
 ```
 
 然后重启 n8n。
