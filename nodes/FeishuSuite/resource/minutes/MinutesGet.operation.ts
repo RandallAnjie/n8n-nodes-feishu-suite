@@ -20,7 +20,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Minutes token from the minutes URL.',
+			description: 'Minutes token from the minutes URL',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

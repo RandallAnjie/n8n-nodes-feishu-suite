@@ -20,7 +20,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Department ID to update.',
+			description: 'Department ID to update',
 		},
 		{
 			displayName: 'User ID Type',
@@ -32,14 +32,14 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 		{
 			displayName: 'Request Body',
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

@@ -6,7 +6,7 @@ import NodeUtils from '../../../help/utils/node';
 export default {
 	name: 'Create Node Hierarchy (创建层级节点)',
 	value: 'createSpaceNodeHierarchy',
-	order=70,
+	order: 70,
 	options: [
 		{
 			displayName:
@@ -21,7 +21,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Wiki space ID.',
+			description: 'Wiki space ID',
 		},
 		{
 			displayName: 'Object Type',
@@ -36,12 +36,13 @@ export default {
 				{ name: 'Slides', value: 'slides' },
 			],
 			default: 'docx',
-			description: 'Document type created for the leaf node.',
+			description: 'Document type created for the leaf node',
 		},
 		{
 			displayName: 'Parent Node Token',
 			name: 'parent_node_token',
 			type: 'string',
+			typeOptions: { password: true },
 			default: '',
 			description: 'Optional parent node token. Leave empty to create under the space root.',
 		},
@@ -51,14 +52,14 @@ export default {
 			type: 'json',
 			required: true,
 			default: '["Folder","Doc title"]',
-			description: 'JSON array of titles created from parent to leaf.',
+			description: 'JSON array of titles created from parent to leaf',
 		},
 		{
 			displayName: 'Skip Existing',
 			name: 'skipExisting',
 			type: 'boolean',
 			default: true,
-			description: 'Whether to reuse a child node when a title already exists.',
+			description: 'Whether to reuse a child node when a title already exists',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

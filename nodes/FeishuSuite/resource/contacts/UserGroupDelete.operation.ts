@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'User group ID.',
+			description: 'User group ID',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

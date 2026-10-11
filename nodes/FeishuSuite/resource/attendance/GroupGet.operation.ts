@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Attendance group ID.',
+			description: 'Attendance group ID',
 		},
 		{
 			displayName: 'Employee Type',
@@ -30,7 +30,7 @@ export default {
 				{ name: 'Employee No', value: 'employee_no' },
 			],
 			default: 'employee_id',
-			description: 'ID type of employees in the response.',
+			description: 'ID type of employees in the response',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Aily file ID returned by the upload API.',
+			description: 'Aily file ID returned by the upload API',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

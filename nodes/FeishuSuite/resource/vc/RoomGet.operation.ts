@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Meeting room ID.',
+			description: 'Meeting room ID',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

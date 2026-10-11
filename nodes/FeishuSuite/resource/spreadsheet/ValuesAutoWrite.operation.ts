@@ -17,7 +17,7 @@ function columnLabel(index: number): string {
 export default {
 	name: 'Auto Write Values (自动写入数据)',
 	value: 'autoWriteValues',
-	order=80,
+	order: 80,
 	options: [
 		{
 			displayName:
@@ -33,7 +33,6 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Spreadsheet token.',
 		},
 		{
 			displayName: 'Sheet ID',
@@ -41,7 +40,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Worksheet ID used to build the write range.',
+			description: 'Worksheet ID used to build the write range',
 		},
 		{
 			displayName: 'Values',
@@ -49,7 +48,7 @@ export default {
 			type: 'json',
 			required: true,
 			default: '[["A1","B1"],["A2","B2"]]',
-			description: 'Two-dimensional JSON array of cell values.',
+			description: 'Two-dimensional JSON array of cell values',
 		},
 		{
 			displayName: 'Start Row',
@@ -57,7 +56,7 @@ export default {
 			type: 'number',
 			required: true,
 			default: 1,
-			description: '1-based row number where writing starts.',
+			description: '1-based row number where writing starts',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

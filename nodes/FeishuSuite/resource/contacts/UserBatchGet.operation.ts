@@ -21,7 +21,7 @@ export default {
 			type: 'json',
 			required: true,
 			default: '[]',
-			description: 'JSON array of user IDs to retrieve.',
+			description: 'JSON array of user IDs to retrieve',
 		},
 		{
 			displayName: 'User ID Type',
@@ -33,7 +33,7 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

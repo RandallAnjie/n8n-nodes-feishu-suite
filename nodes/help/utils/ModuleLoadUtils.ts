@@ -20,7 +20,6 @@ class ModuleLoadUtils {
 		const modules = [];
 		for (const file of files) {
 			const fullpath = path.resolve(searchDir, file);
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const loaded = require(fullpath);
 			modules.push({
 				...loaded.default,

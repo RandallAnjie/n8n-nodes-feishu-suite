@@ -23,14 +23,14 @@ export default {
 				{ name: 'Employee No', value: 'employee_no' },
 			],
 			default: 'employee_id',
-			description: 'ID type of the employee_ids values.',
+			description: 'ID type of the employee_ids values',
 		},
 		{
 			displayName: 'Request Body',
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

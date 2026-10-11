@@ -26,7 +26,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Mail message ID.',
+			description: 'Mail message ID',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

@@ -21,7 +21,7 @@ export default {
 			typeOptions: { password: true },
 			required: true,
 			default: '',
-			description: 'Encrypt Key from the Feishu/Lark developer console event subscription page.',
+			description: 'Encrypt Key from the Feishu/Lark developer console event subscription page',
 		},
 		{
 			displayName: 'Encrypt Data',
@@ -29,7 +29,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Encrypted event payload, usually the encrypt field of the webhook body.',
+			description: 'Encrypted event payload, usually the encrypt field of the webhook body',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

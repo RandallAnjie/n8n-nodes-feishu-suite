@@ -20,7 +20,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Approval definition code.',
+			description: 'Approval definition code',
 		},
 		{
 			displayName: 'Instance Code',
@@ -28,7 +28,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Approval instance code.',
+			description: 'Approval instance code',
 		},
 		{
 			displayName: 'User ID',
@@ -36,7 +36,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Task operator user ID.',
+			description: 'Task operator user ID',
 		},
 		{
 			displayName: 'Task ID',
@@ -44,7 +44,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Approval task ID from instance task_list.',
+			description: 'Approval task ID from instance task_list',
 		},
 		{
 			displayName: 'User ID Type',
@@ -56,14 +56,14 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 		{
 			displayName: 'Request Body',
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

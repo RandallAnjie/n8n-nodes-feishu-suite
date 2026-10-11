@@ -6,7 +6,7 @@ import NodeUtils from '../../../help/utils/node';
 export default {
 	name: 'Batch Save Fields (批量保存字段)',
 	value: 'batchSaveFields',
-	order=70,
+	order: 70,
 	options: [
 		{
 			displayName:
@@ -22,7 +22,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Bitable app token.',
+			description: 'Bitable app token',
 		},
 		{
 			displayName: 'Table ID',
@@ -30,7 +30,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Bitable table ID.',
+			description: 'Bitable table ID',
 		},
 		{
 			displayName: 'Fields',

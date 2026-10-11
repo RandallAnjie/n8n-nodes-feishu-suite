@@ -6,7 +6,7 @@ import { OutputType } from '../../../help/type/enums';
 export default {
 	name: 'Download File (下载文件)',
 	value: 'downloadSpaceFile',
-	order=125,
+	order: 125,
 	options: [
 		{
 			displayName:
@@ -22,14 +22,14 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'File token to download from Drive.',
+			description: 'File token to download from Drive',
 		},
 		{
 			displayName: 'Binary Property',
 			name: 'binaryPropertyName',
 			type: 'string',
 			default: 'data',
-			description: 'Name of the binary property that will hold the downloaded file.',
+			description: 'Name of the binary property that will hold the downloaded file',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

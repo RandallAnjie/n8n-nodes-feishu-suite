@@ -19,7 +19,6 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Mail group ID.',
 		},
 		{
 			displayName: 'Member ID',
@@ -27,7 +26,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Mail group member ID.',
+			description: 'Mail group member ID',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

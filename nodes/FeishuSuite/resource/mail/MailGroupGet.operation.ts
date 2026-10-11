@@ -19,7 +19,6 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Mail group ID.',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

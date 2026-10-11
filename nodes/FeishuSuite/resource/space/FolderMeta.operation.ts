@@ -20,7 +20,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Cloud folder token.',
+			description: 'Cloud folder token',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

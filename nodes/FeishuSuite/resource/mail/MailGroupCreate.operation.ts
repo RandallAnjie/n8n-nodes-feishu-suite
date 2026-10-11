@@ -19,7 +19,7 @@ export default {
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

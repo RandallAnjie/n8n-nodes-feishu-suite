@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Department ID to delete.',
+			description: 'Department ID to delete',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

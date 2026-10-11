@@ -20,14 +20,13 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Mail group ID.',
 		},
 		{
 			displayName: 'Return All',
 			name: 'returnAll',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to return every page of results.',
+			description: 'Whether to return all results or only up to a given limit',
 		},
 		{
 			displayName: 'Limit',
@@ -35,7 +34,7 @@ export default {
 			type: 'number',
 			typeOptions: { minValue: 1 },
 			default: 50,
-			description: 'Max number of results to return.',
+			description: 'Max number of results to return',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

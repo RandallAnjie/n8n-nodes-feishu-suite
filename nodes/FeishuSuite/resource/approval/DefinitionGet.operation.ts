@@ -19,7 +19,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Approval definition code.',
+			description: 'Approval definition code',
 		},
 		{
 			displayName: 'User ID Type',
@@ -31,7 +31,7 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

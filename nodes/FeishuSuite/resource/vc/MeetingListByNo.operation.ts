@@ -20,7 +20,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: '9-digit meeting number.',
+			description: '9-digit meeting number',
 		},
 		{
 			displayName: 'Start Time',
@@ -28,7 +28,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Unix start time in seconds.',
+			description: 'Unix start time in seconds',
 		},
 		{
 			displayName: 'End Time',
@@ -36,14 +36,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Unix end time in seconds.',
+			description: 'Unix end time in seconds',
 		},
 		{
 			displayName: 'Return All',
 			name: 'returnAll',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to return every page of results.',
+			description: 'Whether to return all results or only up to a given limit',
 		},
 		{
 			displayName: 'Limit',
@@ -51,7 +51,7 @@ export default {
 			type: 'number',
 			typeOptions: { minValue: 1 },
 			default: 50,
-			description: 'Max number of results to return.',
+			description: 'Max number of results to return',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

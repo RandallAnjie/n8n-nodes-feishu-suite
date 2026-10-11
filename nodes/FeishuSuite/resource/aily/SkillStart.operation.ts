@@ -20,7 +20,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Aily application ID, for example spring_xxx__c.',
+			description: 'Aily application ID, for example spring_xxx__c',
 		},
 		{
 			displayName: 'Skill ID',
@@ -28,14 +28,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Aily skill ID, for example skill_xxx.',
+			description: 'Aily skill ID, for example skill_xxx',
 		},
 		{
 			displayName: 'Request Body',
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

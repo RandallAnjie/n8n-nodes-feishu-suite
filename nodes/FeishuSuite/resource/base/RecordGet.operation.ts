@@ -20,7 +20,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Bitable app token.',
+			description: 'Bitable app token',
 		},
 		{
 			displayName: 'Table ID',
@@ -28,7 +28,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Bitable table ID.',
+			description: 'Bitable table ID',
 		},
 		{
 			displayName: 'Record ID',
@@ -36,7 +36,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Record ID to retrieve.',
+			description: 'Record ID to retrieve',
 		},
 		{
 			displayName: 'User ID Type',
@@ -48,7 +48,7 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

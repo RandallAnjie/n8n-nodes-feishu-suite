@@ -17,7 +17,7 @@ function adler32(data: Buffer): number {
 export default {
 	name: 'Chunk Upload Media (分片上传素材)',
 	value: 'chunkUploadMedia',
-	order=155,
+	order: 155,
 	options: [
 		{
 			displayName:
@@ -39,7 +39,7 @@ export default {
 				{ name: 'Sheet Image', value: 'sheet_image' },
 			],
 			default: 'bitable_image',
-			description: 'Parent document type that will own the media.',
+			description: 'Parent document type that will own the media',
 		},
 		{
 			displayName: 'Parent Node',
@@ -47,7 +47,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Token of the parent document or block.',
+			description: 'Token of the parent document or block',
 		},
 		{
 			displayName: 'Binary Field',
@@ -55,14 +55,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: 'data',
-			description: 'Name of the incoming binary property that contains the media.',
+			description: 'Name of the incoming binary property that contains the media',
 		},
 		{
 			displayName: 'File Name',
 			name: 'file_name',
 			type: 'string',
 			default: '',
-			description: 'Optional override for the uploaded file name.',
+			description: 'Optional override for the uploaded file name',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

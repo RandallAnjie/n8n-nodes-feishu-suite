@@ -20,14 +20,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Approval definition code.',
+			description: 'Approval definition code',
 		},
 		{
 			displayName: 'Request Body',
 			name: 'body',
 			type: 'json',
 			default: '{}',
-			description: 'JSON request body merged into the API call.',
+			description: 'JSON request body merged into the API call',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

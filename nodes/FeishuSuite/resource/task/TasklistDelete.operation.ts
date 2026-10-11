@@ -19,7 +19,6 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Tasklist GUID.',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

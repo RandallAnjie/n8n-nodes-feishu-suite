@@ -19,7 +19,6 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Section GUID.',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

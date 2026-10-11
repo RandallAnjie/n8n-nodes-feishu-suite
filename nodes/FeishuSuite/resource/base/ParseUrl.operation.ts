@@ -12,7 +12,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Full Feishu or Lark bitable URL containing the app token and optional table ID.',
+			description: 'Full Feishu or Lark bitable URL containing the app token and optional table ID',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

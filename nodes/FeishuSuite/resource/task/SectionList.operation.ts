@@ -19,7 +19,7 @@ export default {
 			name: 'resource_type',
 			type: 'string',
 			default: 'tasklist',
-			description: 'Section owner type, usually tasklist.',
+			description: 'Section owner type, usually tasklist',
 		},
 		{
 			displayName: 'Resource ID',
@@ -27,7 +27,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Tasklist GUID.',
+			description: 'Tasklist GUID',
 		},
 		{
 			displayName: 'User ID Type',
@@ -39,14 +39,14 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 		{
 			displayName: 'Return All',
 			name: 'returnAll',
 			type: 'boolean',
 			default: false,
-			description: 'Whether to return every page of results.',
+			description: 'Whether to return all results or only up to a given limit',
 		},
 		{
 			displayName: 'Limit',
@@ -54,7 +54,7 @@ export default {
 			type: 'number',
 			typeOptions: { minValue: 1 },
 			default: 50,
-			description: 'Max number of results to return.',
+			description: 'Max number of results to return',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

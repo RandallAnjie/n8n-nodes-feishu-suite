@@ -22,7 +22,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Bitable app token.',
+			description: 'Bitable app token',
 		},
 		{
 			displayName: 'Table ID',
@@ -30,7 +30,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Bitable table ID.',
+			description: 'Bitable table ID',
 		},
 		{
 			displayName: 'Match Field Name',
@@ -38,7 +38,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Field used to decide whether the record already exists.',
+			description: 'Field used to decide whether the record already exists',
 		},
 		{
 			displayName: 'Match Field Value',
@@ -46,7 +46,7 @@ export default {
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Value compared against the match field.',
+			description: 'Value compared against the match field',
 		},
 		{
 			displayName: 'Fields',
@@ -67,7 +67,7 @@ export default {
 				{ name: 'User ID', value: 'user_id' },
 			],
 			default: 'open_id',
-			description: 'ID type used in this request.',
+			description: 'ID type used in this request',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

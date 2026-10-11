@@ -6,7 +6,7 @@ import { ResourceOperation } from '../../../help/type/IResource';
 export default {
 	name: 'Upload Aily File (上传文件)',
 	value: 'ailyUploadFile',
-	order=20,
+	order: 20,
 	options: [
 		{
 			displayName:
@@ -21,14 +21,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: 'data',
-			description: 'Name of the incoming binary property that contains the file.',
+			description: 'Name of the incoming binary property that contains the file',
 		},
 		{
 			displayName: 'File Name',
 			name: 'file_name',
 			type: 'string',
 			default: '',
-			description: 'Optional override for the uploaded file name.',
+			description: 'Optional override for the uploaded file name',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

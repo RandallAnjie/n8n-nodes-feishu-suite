@@ -17,7 +17,7 @@ function adler32(data: Buffer): number {
 export default {
 	name: 'Chunk Upload File (分片上传文件)',
 	value: 'chunkUploadFile',
-	order=160,
+	order: 160,
 	options: [
 		{
 			displayName:
@@ -33,7 +33,7 @@ export default {
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Destination folder token.',
+			description: 'Destination folder token',
 		},
 		{
 			displayName: 'Binary Field',
@@ -41,14 +41,14 @@ export default {
 			type: 'string',
 			required: true,
 			default: 'data',
-			description: 'Name of the incoming binary property that contains the file.',
+			description: 'Name of the incoming binary property that contains the file',
 		},
 		{
 			displayName: 'File Name',
 			name: 'file_name',
 			type: 'string',
 			default: '',
-			description: 'Optional override for the uploaded file name.',
+			description: 'Optional override for the uploaded file name',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {
