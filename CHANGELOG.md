@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.1
+
+修复 n8n 2.42.x 上「Feishu Suite API」凭据 Test 显示 `Couldn't connect with these settings — Request failed with status code 403`。
+
+根因：n8n 的声明式凭据测试会走 `preAuthentication`（写回 expirable `accessToken`）+ `authenticate`（给探测请求加 `Authorization: Bearer`）+ `test.request`（`baseURL` 来自隐藏字段 `$self` 表达式）。飞书 `POST /open-apis/auth/v3/tenant_access_token/internal` 对错误 App ID/Secret 返回的是 **HTTP 200 + JSON `code`**（10003/10014），不是 403。403 来自这条 n8n 测试链路（未解析的 `baseUrl` 打到错误主机，或 Test 在 persist/鉴权阶段失败）。n8n 在凭据 id 不存在时还会把 `CredentialNotFoundError` 映射成 REST **403 Forbidden**，前端 axios 文案正好是 `Request failed with status code 403`。
+
+### 行为
+
+- Tenant / OAuth2 的 Test 改为节点 `testedBy` 函数：直接请求飞书 token / user_info，不再经过 Bearer + persist
+- 无效凭据返回明确文案（`10003` / `10014` / `20005`），不再把 axios 403 原样甩给用户
+- `preAuthentication` 与节点运行时仍用 App ID/Secret 换 `tenant_access_token`，并按 `url` / `customUrl` 解析 Base URL（不依赖未求值的 `$self`）
+
 ## 0.1.0
 
 首个独立发行（不是任何 GitHub fork）。源码以普通文件从 MIT 上游拷入后重命名、合并并扩展。

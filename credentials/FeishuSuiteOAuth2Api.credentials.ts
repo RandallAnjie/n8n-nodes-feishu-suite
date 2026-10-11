@@ -1,4 +1,4 @@
-import type { Icon, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 import { BaseUrl, Credentials } from '../nodes/help/type/enums';
 
 export class FeishuSuiteOAuth2Api implements ICredentialType {
@@ -132,11 +132,5 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 		},
 	];
 
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.baseUrl}}',
-			url: '/open-apis/authen/v1/user_info',
-			method: 'GET',
-		},
-	};
+	supportedNodes = ['feishuSuite'];
 }

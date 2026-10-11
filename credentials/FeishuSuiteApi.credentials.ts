@@ -1,6 +1,5 @@
 import type {
 	ICredentialDataDecryptedObject,
-	ICredentialTestRequest,
 	ICredentialType,
 	IHttpRequestHelper,
 	INodeProperties,
@@ -8,6 +7,7 @@ import type {
 	IAuthenticateGeneric,
 } from 'n8n-workflow';
 import { BaseUrl, Credentials } from '../nodes/help/type/enums';
+import { feishuTenantTokenUrl, formatFeishuAuthError } from '../nodes/help/utils/credentialBaseUrl';
 
 export class FeishuSuiteApi implements ICredentialType {
 	name = Credentials.TenantToken;
@@ -86,20 +86,30 @@ export class FeishuSuiteApi implements ICredentialType {
 		},
 	];
 
-	// method will only be called if "accessToken" (the expirable property)
-	// is empty or is expired
+	// Used by workflow requests, not by the credential Test button.
+	// Test is implemented via FeishuSuite.methods.credentialTest so n8n does not
+	// attach Authorization and persist the token while probing App ID/Secret.
 	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject) {
 		const { code, msg, tenant_access_token } = (await this.helpers.httpRequest({
 			method: 'POST',
-			url: `${credentials.baseUrl}/open-apis/auth/v3/tenant_access_token/internal`,
+			url: feishuTenantTokenUrl(credentials),
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
 			body: {
 				app_id: credentials.appid,
 				app_secret: credentials.appsecret,
 			},
+			json: true,
 		})) as { code: number; msg: string; tenant_access_token: string };
 
 		if (code && code !== 0) {
-			throw new Error('Authentication failed:' + code + ', ' + msg);
+			throw new Error(formatFeishuAuthError(code, msg));
+		}
+
+		if (!tenant_access_token) {
+			throw new Error('Feishu did not return a tenant_access_token');
 		}
 
 		return { accessToken: tenant_access_token };
@@ -114,34 +124,5 @@ export class FeishuSuiteApi implements ICredentialType {
 		},
 	};
 
-	// The block below tells how this credential can be tested
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.baseUrl}}',
-			url: `/open-apis/auth/v3/tenant_access_token/internal`,
-			method: 'POST',
-			body: {
-				app_id: '={{$credentials.appid}}',
-				app_secret: '={{$credentials.appsecret}}',
-			},
-		},
-		rules: [
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					message: 'Invalid param',
-					key: 'code',
-					value: 10003,
-				},
-			},
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					message: 'App secret invalid',
-					key: 'code',
-					value: 10014,
-				},
-			},
-		],
-	};
+	supportedNodes = ['feishuSuite'];
 }

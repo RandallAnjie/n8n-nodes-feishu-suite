@@ -1,6 +1,7 @@
 import type { IExecuteFunctions, IHttpRequestOptions, JsonObject } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 import { Credentials } from '../type/enums';
+import { resolveFeishuBaseUrl } from './credentialBaseUrl';
 
 class RequestUtils {
 	static async originRequest(
@@ -15,7 +16,7 @@ class RequestUtils {
 		) as string;
 
 		const credentials = await this.getCredentials(authenticationMethod);
-		options.baseURL = credentials.baseUrl as string;
+		options.baseURL = resolveFeishuBaseUrl(credentials);
 
 		if (authenticationMethod === Credentials.TenantToken) {
 			// Replace the accessToken with an empty string if clearAccessToken is true, so the preAuthentication method can be triggered

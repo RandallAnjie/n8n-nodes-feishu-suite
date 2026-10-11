@@ -19,6 +19,7 @@ import { triggerEventProperty } from '../help/utils/properties';
 import { WORDING } from '../help/wording';
 import { ANY_EVENT } from '../lark-sdk/consts';
 import RequestUtils from '../help/utils/RequestUtils';
+import { resolveFeishuBaseUrl } from '../help/utils/credentialBaseUrl';
 
 export class FeishuSuiteTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -196,7 +197,7 @@ export class FeishuSuiteTrigger implements INodeType {
 	async trigger(this: ITriggerFunctions): Promise<ITriggerResponse> {
 		const credentials = await this.getCredentials(Credentials.TenantToken);
 
-		if (!(credentials.appid && credentials.appsecret && credentials.baseUrl)) {
+		if (!(credentials.appid && credentials.appsecret)) {
 			throw new NodeOperationError(this.getNode(), 'Missing required Feishu Suite credentials');
 		}
 
@@ -234,7 +235,7 @@ export class FeishuSuiteTrigger implements INodeType {
 
 		const appId = credentials['appid'] as string;
 		const appSecret = credentials['appsecret'] as string;
-		const baseUrl = credentials['baseUrl'] as string;
+		const baseUrl = resolveFeishuBaseUrl(credentials);
 
 		const wsClient: WSClient = new WSClient({
 			appId,
