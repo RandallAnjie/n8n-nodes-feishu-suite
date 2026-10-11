@@ -11,7 +11,7 @@ export default {
 	order: 215,
 	options: [
 		{
-			displayName: '⚠️ This operation requires User Token (OAuth2) authentication. Tenant Access Token is not supported. Switch to \'Lark OAuth2 API\' in the node\'s Authentication setting.',
+			displayName: '⚠️ This operation requires User Token (OAuth2) authentication. Tenant Access Token is not supported. Switch to \'Feishu Suite OAuth2 API\' in the node\'s Authentication setting.',
 			name: 'authNotice',
 			type: 'notice',
 			default: '',

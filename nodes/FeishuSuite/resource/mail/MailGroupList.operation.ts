@@ -43,7 +43,7 @@ export default {
 				
 			});
 			return data;
-		}, 'mailgroup_list');
+		}, 'items');
 		return {
 			items: result.items,
 			has_more: result.hasMore,

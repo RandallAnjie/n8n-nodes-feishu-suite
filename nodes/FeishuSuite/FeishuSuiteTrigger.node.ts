@@ -29,7 +29,7 @@ export class FeishuSuiteTrigger implements INodeType {
 		version: [1, 2],
 		defaultVersion: 2,
 		subtitle: '=Events: {{$parameter["events"].join(", ")}}',
-		description: 'Starts the workflow on Lark events',
+		description: 'Starts the workflow on Feishu/Lark events',
 		defaults: {
 			name: 'Feishu Suite Trigger',
 		},
@@ -90,7 +90,7 @@ export class FeishuSuiteTrigger implements INodeType {
 								name: 'Using Respond Node',
 								value: 'responseNode',
 								description:
-									'Use a Respond to Lark node to send the response. The trigger will wait up to 3000ms for the response.',
+									'Use a Respond to Feishu Suite node to send the response. The trigger will wait up to 3000ms for the response.',
 							},
 						],
 					},
@@ -169,7 +169,7 @@ export class FeishuSuiteTrigger implements INodeType {
 			},
 			{
 				displayName:
-					'When using "Using Respond Node" mode, you must add a Respond to Lark node to your workflow to respond to the trigger.',
+					'When using "Using Respond Node" mode, you must add a Respond to Feishu Suite node to your workflow to respond to the trigger.',
 				name: 'responseNodeNotice',
 				type: 'notice',
 				default: '',
@@ -197,7 +197,7 @@ export class FeishuSuiteTrigger implements INodeType {
 		const credentials = await this.getCredentials(Credentials.TenantToken);
 
 		if (!(credentials.appid && credentials.appsecret && credentials.baseUrl)) {
-			throw new NodeOperationError(this.getNode(), 'Missing required Lark credentials');
+			throw new NodeOperationError(this.getNode(), 'Missing required Feishu Suite credentials');
 		}
 
 		const options = this.getNodeParameter('options', {}) as IDataObject;

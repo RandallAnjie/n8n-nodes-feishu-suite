@@ -1,4 +1,4 @@
-import type { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 import { BaseUrl, Credentials } from '../nodes/help/type/enums';
 
 export class FeishuSuiteOAuth2Api implements ICredentialType {
@@ -36,7 +36,7 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 					description: 'Custom URL',
 				},
 			],
-			default: [],
+			default: BaseUrl.China,
 			required: true,
 		},
 		{
@@ -101,7 +101,7 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 			name: 'authUrl',
 			type: 'hidden',
 			default:
-				'={{$self["url"] === "custom" ? $self["customAuthorizationUrl"] : $self["url"] === "https://open.feishu.cn" ? "https://accounts.feishu.cn/open-apis/authen/v1/authorize" : "https://accounts.larksuite.com/open-apis/authen/v1/authorize"}}',
+				'={{$self["url"] === "custom" ? $self["customAuthorizationUrl"] : $self["url"] === "https://open.larksuite.com" ? "https://accounts.larksuite.com/open-apis/authen/v1/authorize" : "https://accounts.feishu.cn/open-apis/authen/v1/authorize"}}',
 			required: true,
 		},
 		{
@@ -109,7 +109,7 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 			name: 'accessTokenUrl',
 			type: 'hidden',
 			default:
-				'={{$self["url"] === "custom" ? $self["customAccessTokenUrl"] : $self["url"] === "https://open.feishu.cn" ? "https://open.feishu.cn/open-apis/authen/v2/oauth/token" : "https://open.larksuite.com/open-apis/authen/v2/oauth/token"}}',
+				'={{$self["url"] === "custom" ? $self["customAccessTokenUrl"] : $self["url"] === "https://open.larksuite.com" ? "https://open.larksuite.com/open-apis/authen/v2/oauth/token" : "https://open.feishu.cn/open-apis/authen/v2/oauth/token"}}',
 			required: true,
 		},
 		{
@@ -131,4 +131,12 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 			default: 'header',
 		},
 	];
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '={{$credentials.baseUrl}}',
+			url: '/open-apis/authen/v1/user_info',
+			method: 'GET',
+		},
+	};
 }

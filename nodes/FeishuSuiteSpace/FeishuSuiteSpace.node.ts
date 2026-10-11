@@ -38,10 +38,10 @@ export class FeishuSuiteSpace implements INodeType {
 		group: ['input'],
 		version: [1],
 		defaultVersion: 1,
-		description: 'Lark Drive Operations (Files, Folders, Media)',
+		description: 'Feishu Suite Drive operations (files, folders, media)',
 		subtitle: '={{$parameter["operation"]}}',
 		defaults: {
-			name: 'Lark Drive',
+			name: 'Feishu Suite Space',
 		},
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],

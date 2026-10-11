@@ -9,7 +9,7 @@ export default {
 	order: 80,
 	options: [
 		{
-			displayName: '<a target="_blank" href="https://open.feishu.cn/document/server-docs/search-v2/user/search">Open official document</a>',
+			displayName: '<a target="_blank" href="https://open.feishu.cn/document/server-docs/contact-v3/user/search-users">Open official document</a>',
 			name: 'notice',
 			type: 'notice',
 			default: '',

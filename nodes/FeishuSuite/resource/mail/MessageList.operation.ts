@@ -52,10 +52,10 @@ export default {
 				method: 'GET',
 				url: `/open-apis/mail/v1/user_mailboxes/${user_mailbox_id}/messages`,
 				qs: {
-					folder_id, page_size: 50,
+					page_size: 20,
+					...(folder_id && { folder_id }),
 					...(pageToken && { page_token: pageToken }),
 				},
-				
 			});
 			return data;
 		}, 'items');

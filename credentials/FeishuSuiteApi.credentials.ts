@@ -36,7 +36,7 @@ export class FeishuSuiteApi implements ICredentialType {
 					description: 'Custom URL',
 				},
 			],
-			default: [],
+			default: BaseUrl.China,
 			required: true,
 		},
 		{

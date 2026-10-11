@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 0.1.0
 
 首个独立发行（不是任何 GitHub fork）。源码以普通文件从 MIT 上游拷入后重命名、合并并扩展。
 
@@ -30,3 +30,11 @@
 - 考勤：考勤组、班次、打卡记录、统计
 
 当前合计 **269** 个操作（相对 snae +91）。用 `npm run enumerate` 复核。
+
+### 发布前自检修复
+
+- 凭据 Base URL 默认中国区 `https://open.feishu.cn`；未选国际版时 OAuth 回落到飞书域名，不再误用 Lark
+- Tenant / OAuth2 凭据测试请求均按所选 `baseUrl` 走 Feishu 或 Lark 域名
+- 妙记转写按官方文档按文件二进制流返回（`txt` / `srt`）
+- 邮件组列表分页字段改为官方 `items`；邮件列表空 `folder_id` 不再传给 API，且 `page_size` 上限改为 20
+- 去掉残留的上游节点/凭据显示名（如 Lark OAuth2 API、Lark Drive、Respond to Lark）

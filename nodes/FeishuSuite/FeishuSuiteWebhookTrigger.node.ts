@@ -20,9 +20,9 @@ export class FeishuSuiteWebhookTrigger implements INodeType {
 		version: [1],
 		defaultVersion: 1,
 		subtitle: '=Events: {{$parameter["events"].join(", ")}}',
-		description: 'Starts the workflow on Lark events via HTTP webhook',
+		description: 'Starts the workflow on Feishu/Lark events via HTTP webhook',
 		defaults: {
-			name: 'Lark Webhook Trigger',
+			name: 'Feishu Suite Webhook Trigger',
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
@@ -98,13 +98,13 @@ export class FeishuSuiteWebhookTrigger implements INodeType {
 						name: 'Using Respond Node',
 						value: 'responseNode',
 						description:
-							'Use a Lark Response node to send the response. No immediate response is sent.',
+							'Use a Respond to Feishu Suite node to send the response. No immediate response is sent.',
 					},
 				],
 			},
 			{
 				displayName:
-					'When using "Using Respond Node" mode, you must add a Lark Response node to your workflow to respond to the webhook.',
+					'When using "Using Respond Node" mode, you must add a Respond to Feishu Suite node to your workflow to respond to the webhook.',
 				name: 'responseNodeNotice',
 				type: 'notice',
 				default: '',
