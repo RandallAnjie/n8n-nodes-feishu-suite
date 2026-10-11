@@ -6,6 +6,9 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	IDataObject,
+	ICredentialTestFunctions,
+	ICredentialsDecrypted,
+	INodeCredentialTestResult,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import ResourceFactory from '../help/builder/ResourceFactory';
@@ -24,6 +27,10 @@ import {
 } from './GenericFunctions';
 import RequestUtils from '../help/utils/RequestUtils';
 import { sendAndWaitWebhook } from '../help/utils/webhook';
+import {
+	testFeishuSuiteApiCredential,
+	testFeishuSuiteOAuth2Credential,
+} from '../help/utils/credentialTests';
 
 const resourceBuilder = ResourceFactory.build(__dirname);
 
@@ -47,6 +54,7 @@ export class FeishuSuite implements INodeType {
 			{
 				name: Credentials.TenantToken,
 				required: true,
+				testedBy: 'feishuSuiteApiTest',
 				displayOptions: {
 					show: {
 						authentication: [Credentials.TenantToken],
@@ -59,6 +67,7 @@ export class FeishuSuite implements INodeType {
 			{
 				name: Credentials.UserToken,
 				required: true,
+				testedBy: 'feishuSuiteOAuth2ApiTest',
 				displayOptions: {
 					show: {
 						authentication: [Credentials.UserToken],
@@ -93,6 +102,20 @@ export class FeishuSuite implements INodeType {
 	};
 
 	methods = {
+		credentialTest: {
+			async feishuSuiteApiTest(
+				this: ICredentialTestFunctions,
+				credential: ICredentialsDecrypted,
+			): Promise<INodeCredentialTestResult> {
+				return testFeishuSuiteApiCredential.call(this, credential);
+			},
+			async feishuSuiteOAuth2ApiTest(
+				this: ICredentialTestFunctions,
+				credential: ICredentialsDecrypted,
+			): Promise<INodeCredentialTestResult> {
+				return testFeishuSuiteOAuth2Credential.call(this, credential);
+			},
+		},
 		listSearch: {
 			async searchBitables(this: ILoadOptionsFunctions): Promise<INodeListSearchResult> {
 				const bitables = await getFileList.call(this as unknown as IExecuteFunctions, [

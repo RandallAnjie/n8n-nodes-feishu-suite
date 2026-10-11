@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-feishu-suite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Full-featured Feishu/Lark community nodes for n8n, including messages, bitable, docs, approval, tasks, mail, minutes, VC, search and attendance.",
   "keywords": [
     "n8n-community-node-package",

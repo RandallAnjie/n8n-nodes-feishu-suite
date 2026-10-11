@@ -134,9 +134,19 @@ export class FeishuSuiteOAuth2Api implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '={{$credentials.baseUrl}}',
+			baseURL: '={{$credentials.url === "custom" ? $credentials.customUrl : $credentials.url}}',
 			url: '/open-apis/authen/v1/user_info',
 			method: 'GET',
 		},
+		rules: [
+			{
+				type: 'responseSuccessBody',
+				properties: {
+					message: 'Invalid or expired user access token (Feishu code 20005). Reconnect OAuth2.',
+					key: 'code',
+					value: 20005,
+				},
+			},
+		],
 	};
 }

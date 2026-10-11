@@ -5,9 +5,14 @@ import type {
 	IHttpRequestHelper,
 	INodeProperties,
 	Icon,
-	IAuthenticateGeneric,
+	IHttpRequestOptions,
 } from 'n8n-workflow';
 import { BaseUrl, Credentials } from '../nodes/help/type/enums';
+import {
+	feishuTenantTokenUrl,
+	formatCredentialHttpError,
+	formatFeishuAuthError,
+} from '../nodes/help/utils/credentialBaseUrl';
 
 export class FeishuSuiteApi implements ICredentialType {
 	name = Credentials.TenantToken;
@@ -86,39 +91,71 @@ export class FeishuSuiteApi implements ICredentialType {
 		},
 	];
 
-	// method will only be called if "accessToken" (the expirable property)
-	// is empty or is expired
+	// Workflow requests and the credential Test button both call this when
+	// accessToken is empty/expired (Test always does). Resolve the origin from
+	// url/customUrl in code so an unevaluated hidden $self baseUrl cannot send
+	// the probe to the wrong host.
 	async preAuthentication(this: IHttpRequestHelper, credentials: ICredentialDataDecryptedObject) {
-		const { code, msg, tenant_access_token } = (await this.helpers.httpRequest({
-			method: 'POST',
-			url: `${credentials.baseUrl}/open-apis/auth/v3/tenant_access_token/internal`,
-			body: {
-				app_id: credentials.appid,
-				app_secret: credentials.appsecret,
-			},
-		})) as { code: number; msg: string; tenant_access_token: string };
+		const tokenUrl = feishuTenantTokenUrl(credentials);
+		let payload: { code?: number; msg?: string; tenant_access_token?: string };
+		try {
+			payload = (await this.helpers.httpRequest({
+				method: 'POST',
+				url: tokenUrl,
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: {
+					app_id: credentials.appid,
+					app_secret: credentials.appsecret,
+				},
+				json: true,
+			})) as { code?: number; msg?: string; tenant_access_token?: string };
+		} catch (error) {
+			throw new Error(formatCredentialHttpError(error, tokenUrl));
+		}
 
+		const { code, msg, tenant_access_token } = payload;
 		if (code && code !== 0) {
-			throw new Error('Authentication failed:' + code + ', ' + msg);
+			throw new Error(formatFeishuAuthError(code, msg));
+		}
+
+		if (!tenant_access_token) {
+			throw new Error('Feishu did not return a tenant_access_token');
 		}
 
 		return { accessToken: tenant_access_token };
 	}
 
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				Authorization: '=Bearer {{$credentials?.accessToken}}',
-			},
-		},
-	};
+	async authenticate(
+		credentials: ICredentialDataDecryptedObject,
+		requestOptions: IHttpRequestOptions,
+	): Promise<IHttpRequestOptions> {
+		const target = `${requestOptions.baseURL ?? ''}${requestOptions.url ?? ''}`;
+		// The tenant token endpoint authenticates with app_id/app_secret in the
+		// body. Attaching Bearer here is what some Feishu/WAF edges 403, and it
+		// is unnecessary for Test which re-POSTs that same path.
+		if (target.includes('/open-apis/auth/v3/tenant_access_token/internal')) {
+			return requestOptions;
+		}
+		requestOptions.headers = {
+			...requestOptions.headers,
+			Authorization: `Bearer ${credentials.accessToken}`,
+		};
+		return requestOptions;
+	}
 
-	// The block below tells how this credential can be tested
+	// Declarative test is required so n8n 2.x always finds a tester for community
+	// packages (custom-extension nodes are loaded as CUSTOM.feishuSuite, so
+	// testedBy on feishuSuite is not discovered). The request uses url/customUrl
+	// directly — not the hidden $self baseUrl field — and the rules cover Feishu
+	// HTTP 200 error codes. preAuthentication still runs first when accessToken
+	// is empty and now throws the same mapped messages.
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '={{$credentials.baseUrl}}',
-			url: `/open-apis/auth/v3/tenant_access_token/internal`,
+			baseURL: '={{$credentials.url === "custom" ? $credentials.customUrl : $credentials.url}}',
+			url: '/open-apis/auth/v3/tenant_access_token/internal',
 			method: 'POST',
 			body: {
 				app_id: '={{$credentials.appid}}',
@@ -129,7 +166,7 @@ export class FeishuSuiteApi implements ICredentialType {
 			{
 				type: 'responseSuccessBody',
 				properties: {
-					message: 'Invalid param',
+					message: 'Invalid App ID or request parameters (Feishu code 10003)',
 					key: 'code',
 					value: 10003,
 				},
@@ -137,7 +174,7 @@ export class FeishuSuiteApi implements ICredentialType {
 			{
 				type: 'responseSuccessBody',
 				properties: {
-					message: 'App secret invalid',
+					message: 'App secret invalid (Feishu code 10014)',
 					key: 'code',
 					value: 10014,
 				},
