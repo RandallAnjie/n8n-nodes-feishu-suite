@@ -5,6 +5,7 @@ import {
 	resolveFeishuBaseUrl,
 	feishuTenantTokenUrl,
 } from '../nodes/help/utils/credentialBaseUrl';
+import { FeishuSuiteApi } from '../credentials/FeishuSuiteApi.credentials';
 
 describe('resolveFeishuBaseUrl', () => {
 	it('uses the China or Lark option value', () => {
@@ -71,5 +72,28 @@ describe('Feishu auth error mapping', () => {
 				'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',
 			),
 		).toMatch(/blocked with HTTP 403/);
+	});
+});
+
+describe('FeishuSuiteApi.authenticate', () => {
+	const credential = new FeishuSuiteApi();
+	const creds = { accessToken: 't-runtime' };
+
+	it('does not attach Bearer on the tenant token endpoint', async () => {
+		const options = await credential.authenticate(creds, {
+			baseURL: 'https://open.feishu.cn',
+			url: '/open-apis/auth/v3/tenant_access_token/internal',
+			headers: { Accept: 'application/json' },
+		});
+		expect(options.headers?.Authorization).toBeUndefined();
+	});
+
+	it('attaches Bearer for business API requests', async () => {
+		const options = await credential.authenticate(creds, {
+			baseURL: 'https://open.feishu.cn',
+			url: '/open-apis/im/v1/messages',
+			headers: {},
+		});
+		expect(options.headers?.Authorization).toBe('Bearer t-runtime');
 	});
 });

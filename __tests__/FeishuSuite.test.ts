@@ -51,10 +51,12 @@ describe('Feishu Suite package', () => {
 		expect(tenant).toContain('default: BaseUrl.China');
 		expect(oauth).toContain('default: BaseUrl.China');
 		expect(tenant).toContain('feishuTenantTokenUrl');
+		expect(tenant).toContain('$credentials.url === "custom"');
 		expect(tenant).not.toContain("baseURL: '={{$credentials.baseUrl}}'");
+		expect(oauth).toContain('$credentials.url === "custom"');
 		expect(oauth).not.toContain("baseURL: '={{$credentials.baseUrl}}'");
 		expect(node).toContain("testedBy: 'feishuSuiteApiTest'");
-		expect(node).toContain("testedBy: 'feishuSuiteOAuth2ApiTest'");
+		expect(oauth).toContain('20005');
 		expect(helper).toContain('10003');
 		expect(helper).toContain('10014');
 		expect(oauth).toContain('https://accounts.feishu.cn/open-apis/authen/v1/authorize');

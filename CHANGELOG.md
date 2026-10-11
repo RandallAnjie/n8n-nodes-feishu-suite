@@ -4,13 +4,20 @@
 
 修复 n8n 2.42.x 上「Feishu Suite API」凭据 Test 显示 `Couldn't connect with these settings — Request failed with status code 403`。
 
-根因：n8n 的声明式凭据测试会走 `preAuthentication`（写回 expirable `accessToken`）+ `authenticate`（给探测请求加 `Authorization: Bearer`）+ `test.request`（`baseURL` 来自隐藏字段 `$self` 表达式）。飞书 `POST /open-apis/auth/v3/tenant_access_token/internal` 对错误 App ID/Secret 返回的是 **HTTP 200 + JSON `code`**（10003/10014），不是 403。403 来自这条 n8n 测试链路（未解析的 `baseUrl` 打到错误主机，或 Test 在 persist/鉴权阶段失败）。n8n 在凭据 id 不存在时还会把 `CredentialNotFoundError` 映射成 REST **403 Forbidden**，前端 axios 文案正好是 `Request failed with status code 403`。
+该文案的标题是 n8n 前端固定的 `couldntConnectWithTheseSettings`，后面的 `Request failed with status code 403` 是 `authError` 细节。飞书 `POST /open-apis/auth/v3/tenant_access_token/internal` 对错误 App ID/Secret 返回的是 **HTTP 200 + JSON `code`**（10003/10014），不是 403。实测 403 来自 n8n 测试链路，而不是飞书 token 接口本身：
+
+1. 声明式 Test 会先跑 `preAuthentication`（写回 expirable `accessToken`），再 `authenticate` 给探测请求加 `Authorization: Bearer`，最后 `POST` 同一个 token 路径。0.1.0 的 generic `authenticate` 无条件加 Bearer；部分边缘/WAF 会对带 Bearer 的 token 请求回 403，axios 文案就是 `Request failed with status code 403`。
+2. 0.1.0 的 `test.request.baseURL` 用隐藏字段 `={{$credentials.baseUrl}}`（默认是 `$self` 表达式）。解析失败会打到错误主机。
+3. n8n 在凭据 id 找不到时把 `CredentialNotFoundError` 映射成 REST **403 Forbidden**（前端 axios 同一句）。这是 n8n 自身行为，与飞书无关。
+4. Community / custom-extension 节点会注册成 `CUSTOM.feishuSuite`，`supportedNodes` 为空，所以 **不能只靠** 节点上的 `testedBy`；必须保留凭据类型上的 `test`。
 
 ### 行为
 
-- Tenant / OAuth2 的 Test 改为节点 `testedBy` 函数：直接请求飞书 token / user_info，不再经过 Bearer + persist
-- 无效凭据返回明确文案（`10003` / `10014` / `20005`），不再把 axios 403 原样甩给用户
-- `preAuthentication` 与节点运行时仍用 App ID/Secret 换 `tenant_access_token`，并按 `url` / `customUrl` 解析 Base URL（不依赖未求值的 `$self`）
+- 保留声明式 `test`（否则 n8n 报 `No testing function found`），但 `baseURL` 改为 `url` / `customUrl`，不再读隐藏 `$self` `baseUrl`
+- Tenant `authenticate` 改为函数：token 换票路径不加 Bearer，其它业务请求仍带 `Authorization: Bearer`
+- `preAuthentication` 按 `url` / `customUrl` 解析 origin，并把飞书 `10003` / `10014` 以及 HTTP 403 映射成明确文案
+- OAuth2 Test 同样改用 `url` / `customUrl`，并映射 `20005`
+- 节点运行时仍用 App ID/Secret 换 `tenant_access_token`，并给非 token 请求加 Bearer
 
 ## 0.1.0
 
