@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.2
+
+继续修复 n8n 2.42.x 社区节点安装后「Feishu Suite API」凭据 Test 仍显示 `Couldn't connect with these settings — Request failed with status code 403`。
+
+0.1.1 保留了声明式 `type.test`。n8n 只要凭据类型上有 `test` 就**优先走它**，不会用节点上的 `testedBy`。声明式路径会：
+
+1. 先跑 `preAuthentication`（飞书 token 接口本身对有效/无效 App 都是 **HTTP 200 + JSON `code`**，不是 403）
+2. 再把 expirable `accessToken` **写回数据库**
+3. 再发第二次探测 POST
+
+编辑器对未保存凭据的 Test 发送 `id: ""`。写回步骤会抛 `Found credential with no ID`。若前端带了不存在的 id（或当前用户没有 `credential:manageInstance`），n8n 把 `CredentialNotFoundError` 映射成 REST **403 Forbidden**，axios 文案就是用户看到的那句。这是 **n8n 自己的 `/rest/credentials/test`**，不是飞书。
+
+社区节点 UI 安装（`N8N_COMMUNITY_PACKAGES` / `~/.n8n/nodes`）会把节点注册成 `n8n-nodes-feishu-suite.feishuSuite`，并填满 `supportedNodes`。因此可以去掉 `type.test`，让 Test 走 `FeishuSuite.methods.credentialTest`：只对飞书 token 接口做一次普通 `helpers.request`，不 persist、不加 Bearer。未保存（`id: ""`）和已保存凭据都可以得到 `Connection successful!`。
+
+### 行为
+
+- `FeishuSuiteApi` / `FeishuSuiteOAuth2Api` 不再声明 `test`
+- Tenant Test：`testedBy: feishuSuiteApiTest` → `POST {baseUrl}/open-apis/auth/v3/tenant_access_token/internal`
+- OAuth2 Test：`testedBy: feishuSuiteOAuth2ApiTest` → 已连接则查 user_info，并映射 `20005`
+- 节点运行时仍用 `preAuthentication` 换 `tenant_access_token`，非 token 请求继续带 Bearer
+- 无效 App ID/Secret 仍映射为飞书 `10003` / `10014`，而不是 axios 403
+
 ## 0.1.1
 
 修复 n8n 2.42.x 上「Feishu Suite API」凭据 Test 显示 `Couldn't connect with these settings — Request failed with status code 403`。

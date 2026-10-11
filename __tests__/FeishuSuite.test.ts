@@ -11,9 +11,9 @@ function read(rel: string) {
 describe('Feishu Suite package', () => {
 	const pkg = JSON.parse(read('package.json'));
 
-	it('is version 0.1.1 with community-node metadata', () => {
+	it('is version 0.1.2 with community-node metadata', () => {
 		expect(pkg.name).toBe('n8n-nodes-feishu-suite');
-		expect(pkg.version).toBe('0.1.1');
+		expect(pkg.version).toBe('0.1.2');
 		expect(pkg.keywords).toContain('n8n-community-node-package');
 		expect(pkg.homepage).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite#readme');
 		expect(pkg.repository.url).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite.git');
@@ -48,15 +48,23 @@ describe('Feishu Suite package', () => {
 		const oauth = read('credentials/FeishuSuiteOAuth2Api.credentials.ts');
 		const node = read('nodes/FeishuSuite/FeishuSuite.node.ts');
 		const helper = read('nodes/help/utils/credentialBaseUrl.ts');
+		const tests = read('nodes/help/utils/credentialTests.ts');
 		expect(tenant).toContain('default: BaseUrl.China');
 		expect(oauth).toContain('default: BaseUrl.China');
 		expect(tenant).toContain('feishuTenantTokenUrl');
-		expect(tenant).toContain('$credentials.url === "custom"');
+		// Community-package Test must use testedBy, not declarative type.test.
+		// n8n prefers type.test and that path persist-fails unsaved credentials.
+		expect(tenant).not.toMatch(/\btest\s*=/);
+		expect(oauth).not.toMatch(/\btest\s*=/);
+		expect(tenant).not.toContain('$credentials.url === "custom"');
 		expect(tenant).not.toContain("baseURL: '={{$credentials.baseUrl}}'");
-		expect(oauth).toContain('$credentials.url === "custom"');
+		expect(oauth).not.toContain('$credentials.url === "custom"');
 		expect(oauth).not.toContain("baseURL: '={{$credentials.baseUrl}}'");
 		expect(node).toContain("testedBy: 'feishuSuiteApiTest'");
-		expect(oauth).toContain('20005');
+		expect(node).toContain("testedBy: 'feishuSuiteOAuth2ApiTest'");
+		expect(tests).toContain('testFeishuSuiteApiCredential');
+		expect(tests).toContain('helpers.request');
+		expect(helper).toContain('20005');
 		expect(helper).toContain('10003');
 		expect(helper).toContain('10014');
 		expect(oauth).toContain('https://accounts.feishu.cn/open-apis/authen/v1/authorize');

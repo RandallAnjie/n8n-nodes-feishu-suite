@@ -1,6 +1,5 @@
 import type {
 	ICredentialDataDecryptedObject,
-	ICredentialTestRequest,
 	ICredentialType,
 	IHttpRequestHelper,
 	INodeProperties,
@@ -146,39 +145,10 @@ export class FeishuSuiteApi implements ICredentialType {
 		return requestOptions;
 	}
 
-	// Declarative test is required so n8n 2.x always finds a tester for community
-	// packages (custom-extension nodes are loaded as CUSTOM.feishuSuite, so
-	// testedBy on feishuSuite is not discovered). The request uses url/customUrl
-	// directly — not the hidden $self baseUrl field — and the rules cover Feishu
-	// HTTP 200 error codes. preAuthentication still runs first when accessToken
-	// is empty and now throws the same mapped messages.
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.url === "custom" ? $credentials.customUrl : $credentials.url}}',
-			url: '/open-apis/auth/v3/tenant_access_token/internal',
-			method: 'POST',
-			body: {
-				app_id: '={{$credentials.appid}}',
-				app_secret: '={{$credentials.appsecret}}',
-			},
-		},
-		rules: [
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					message: 'Invalid App ID or request parameters (Feishu code 10003)',
-					key: 'code',
-					value: 10003,
-				},
-			},
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					message: 'App secret invalid (Feishu code 10014)',
-					key: 'code',
-					value: 10014,
-				},
-			},
-		],
-	};
+	// Community-package installs register nodes as n8n-nodes-feishu-suite.feishuSuite
+	// and populate supportedNodes, so FeishuSuite.methods.credentialTest is
+	// discovered via testedBy. Do not add a declarative `test` here: n8n prefers
+	// type.test and that path always runs preAuthentication + persist, which
+	// throws "Found credential with no ID" (or REST 403) on the editor's
+	// unsaved / empty-id Test.
 }
