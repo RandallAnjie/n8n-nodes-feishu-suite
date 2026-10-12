@@ -5,6 +5,7 @@ import { WORDING } from '../../../help/wording';
 import { OperationType } from '../../../help/type/enums';
 import { DESCRIPTIONS } from '../../../help/description';
 import NodeUtils from '../../../help/utils/node';
+import { BITABLE_FIELD_TYPE_NOTICE } from '../../../help/utils/bitableRecord';
 
 export default {
 	name: WORDING.CreateTableField,
@@ -13,6 +14,12 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
+		{
+			displayName: BITABLE_FIELD_TYPE_NOTICE,
+			name: 'bitableFieldHint',
+			type: 'notice',
+			default: '',
+		},
 		DESCRIPTIONS.REQUEST_BODY,
 		{
 			displayName: WORDING.Options,

@@ -3,11 +3,11 @@ import { NodeApiError } from 'n8n-workflow';
 import { Credentials } from '../type/enums';
 import { resolveFeishuBaseUrl } from './credentialBaseUrl';
 import {
-	FEISHU_RATE_LIMIT_CODE,
 	createRetryableError,
 	ensureIdempotencyKey,
 	extractHttpStatus,
 	extractResponseHeaders,
+	isRetryableFeishuBusinessCode,
 	isRetryableHttpStatus,
 	readNodeRetryPolicy,
 	unwrapHttpResponse,
@@ -203,7 +203,7 @@ class RequestUtils {
 			return RequestUtils.interpretSuccess.call(this, raw, requestOptions, false);
 		}
 
-		if (payload.code === FEISHU_RATE_LIMIT_CODE) {
+		if (isRetryableFeishuBusinessCode(payload.code)) {
 			throw createRetryableError({
 				message: formatted.message,
 				statusCode: statusCode && isRetryableHttpStatus(statusCode) ? statusCode : 429,

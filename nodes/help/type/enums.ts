@@ -257,6 +257,8 @@ export declare const enum OperationType {
 	GetTableRecord = 'getRecord',
 	ParseBitableUrl = 'parseBitableUrl',
 	BatchSaveTableFields = 'batchSaveFields',
+	UploadBitableAttachment = 'uploadBitableAttachment',
+	DownloadBitableAttachment = 'downloadBitableAttachment',
 	AutoWriteSpreadsheetValues = 'autoWriteValues',
 	PrependSpreadsheetValues = 'prependValues',
 	ChunkUploadFile = 'chunkUploadFile',

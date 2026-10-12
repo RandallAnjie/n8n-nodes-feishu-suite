@@ -177,7 +177,7 @@ export class FeishuSuiteTrigger implements INodeType {
 			},
 			{
 				displayName:
-					'Before adding this event, please ensure that you have add the subscription in the options field. <a target="_blank" href="https://open.feishu.cn/document/server-docs/docs/drive-v1/event/subscribe">Open Documentation</a>',
+					'订阅多维表格事件前，先在 Options → 订阅云文档事件 里加一条：类型选 Bitable，File Token 填 app_token。对应事件 drive.file.bitable_record_changed_v1 / bitable_field_changed_v1。后台「事件订阅」权限必须随应用版本发布。<a target="_blank" href="https://open.feishu.cn/document/server-docs/docs/drive-v1/event/subscribe">官方文档</a>',
 				name: 'subscriptionNotice',
 				type: 'notice',
 				default: '',

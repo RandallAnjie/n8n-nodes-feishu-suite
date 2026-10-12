@@ -1009,7 +1009,8 @@ export const DESCRIPTIONS = {
 		type: 'resourceLocator',
 		default: { mode: 'id', value: '' },
 		required: true,
-		description: 'Need to have the permission to view the Base above',
+		description:
+			'字段 ID。删除 / 更新字段用这个选择器。写记录、filter、upsert 请用字段名称（searchTableFieldNames）。',
 		modes: [
 			{
 				displayName: 'From List',
@@ -1027,6 +1028,36 @@ export const DESCRIPTIONS = {
 				name: 'id',
 				type: 'string',
 				placeholder: 'Enter Field ID',
+				default: '',
+			},
+		],
+	},
+
+	TABLE_FIELD_NAME: {
+		displayName: '字段名称（Field Name）',
+		name: 'field_name',
+		type: 'resourceLocator',
+		default: { mode: 'name', value: '' },
+		required: true,
+		description:
+			'字段名称，不是 field_id。给查询 / 过滤 / upsert / 记录 JSON 用。列表里会显示类型和 field_id。',
+		modes: [
+			{
+				displayName: 'From List',
+				name: 'list',
+				type: 'list',
+				placeholder: '选择字段名称',
+				typeOptions: {
+					searchListMethod: 'searchTableFieldNames',
+					searchFilterRequired: false,
+					searchable: false,
+				},
+			},
+			{
+				displayName: 'Name',
+				name: 'name',
+				type: 'string',
+				placeholder: '输入字段名称',
 				default: '',
 			},
 		],

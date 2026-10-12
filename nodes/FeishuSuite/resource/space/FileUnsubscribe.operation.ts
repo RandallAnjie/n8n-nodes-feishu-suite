@@ -35,8 +35,8 @@ export default {
 				{ name: 'Sheet', value: 'sheet' },
 				{ name: 'Slides', value: 'slides' },
 			],
-			default: 'docx',
-			description: 'Cloud document type',
+			default: 'bitable',
+			description: 'Cloud document type. Use bitable for a Base app_token.',
 		},
 		{
 			displayName: 'Event Type',

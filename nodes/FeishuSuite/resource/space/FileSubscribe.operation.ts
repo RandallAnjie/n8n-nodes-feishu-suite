@@ -14,16 +14,23 @@ export default {
 			default: '',
 		},
 		{
-			displayName: 'File Token',
+			displayName:
+				'订阅多维表格记录/字段变更：file_type 选 bitable，file_token 填 app_token。然后在 Feishu Suite Trigger 勾选 drive.file.bitable_record_changed_v1 / bitable_field_changed_v1。事件权限必须发布到已启用版本。',
+			name: 'bitableSubscribeHint',
+			type: 'notice',
+			default: '',
+		},
+		{
+			displayName: '文件 Token（File Token）',
 			name: 'file_token',
 			type: 'string',
 			required: true,
 			typeOptions: { password: true },
 			default: '',
-			description: 'Document or folder token',
+			description: '文档或文件夹 token。多维表格填 app_token。',
 		},
 		{
-			displayName: 'File Type',
+			displayName: '文件类型（File Type）',
 			name: 'file_type',
 			type: 'options',
 			options: [
@@ -35,15 +42,15 @@ export default {
 				{ name: 'Sheet', value: 'sheet' },
 				{ name: 'Slides', value: 'slides' },
 			],
-			default: 'docx',
+			default: 'bitable',
 			description: 'Cloud document type',
 		},
 		{
-			displayName: 'Event Type',
+			displayName: '事件类型（Event Type）',
 			name: 'event_type',
 			type: 'string',
 			default: '',
-			description: 'Required for folder subscriptions, usually file.created_in_folder_v1',
+			description: '文件夹订阅必填，通常是 file.created_in_folder_v1',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

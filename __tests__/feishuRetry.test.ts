@@ -1,6 +1,7 @@
 import {
 	FEISHU_RATE_LIMIT_CODE,
 	FEISHU_RETRY_DEFAULTS,
+	isRetryableFeishuBusinessCode,
 	computeBackoffMs,
 	createRetryableError,
 	ensureIdempotencyKey,
@@ -127,6 +128,13 @@ describe('feishuRetry helper', () => {
 
 		expect(result).toBe('ok');
 		expect(attempts).toBe(2);
+	});
+
+	it('retries Bitable TooManyRequest / write-conflict / data-not-ready codes', () => {
+		expect(isRetryableFeishuBusinessCode(1254290)).toBe(true);
+		expect(isRetryableFeishuBusinessCode(1254291)).toBe(true);
+		expect(isRetryableFeishuBusinessCode(1254607)).toBe(true);
+		expect(isRetryableFeishuBusinessCode(1254068)).toBe(false);
 	});
 
 	it('respects Retry-After header instead of exponential backoff', async () => {

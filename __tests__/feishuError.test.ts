@@ -60,6 +60,27 @@ describe('feishuError', () => {
 		expect(formatted.description).toMatch(/字段名称/);
 	});
 
+	it('explains Bitable person / attachment / date / field-name errors', () => {
+		expect(formatFeishuBusinessError(1254066, 'UserFieldConvFail', '').description).toMatch(
+			/人员字段|open_id/,
+		);
+		expect(formatFeishuBusinessError(1254069, 'AttachFieldConvFail', '').description).toMatch(
+			/file_token/,
+		);
+		expect(formatFeishuBusinessError(1254064, 'DatetimeFieldConvFail', '').description).toMatch(
+			/Asia\/Shanghai/,
+		);
+		expect(formatFeishuBusinessError(1254045, 'FieldNameNotFound', '').description).toMatch(
+			/字段名称/,
+		);
+		expect(formatFeishuBusinessError(1254104, 'RecordAddOnceExceedLimit', '').message).toMatch(
+			/500/,
+		);
+		expect(formatFeishuBusinessError(1254301, 'advanced permissions', '').description).toMatch(
+			/is_advanced/,
+		);
+	});
+
 	it('tells operators to publish a new version when scopes look granted', () => {
 		const formatted = formatFeishuBusinessError(
 			99991672,

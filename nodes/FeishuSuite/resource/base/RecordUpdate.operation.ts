@@ -5,6 +5,7 @@ import { DESCRIPTIONS } from '../../../help/description';
 import { WORDING } from '../../../help/wording';
 import { OperationType } from '../../../help/type/enums';
 import NodeUtils from '../../../help/utils/node';
+import { BITABLE_RECORD_HINT, normalizeRecordPayload } from '../../../help/utils/bitableRecord';
 
 export default {
 	name: WORDING.UpdateTableRecord,
@@ -15,8 +16,7 @@ export default {
 		DESCRIPTIONS.BASE_TABLE_ID,
 		DESCRIPTIONS.TABLE_RECORD_ID,
 		{
-			displayName:
-				'Record JSON keys must be field names (字段名称), not field IDs. Date values are Unix milliseconds.',
+			displayName: BITABLE_RECORD_HINT,
 			name: 'bitableFieldsHint',
 			type: 'notice',
 			default: '',
@@ -44,7 +44,7 @@ export default {
 		const table_id = this.getNodeParameter('table_id', index, undefined, {
 			extractValue: true,
 		}) as string;
-		const body = NodeUtils.getObjectData(this, index);
+		const body = normalizeRecordPayload(NodeUtils.getObjectData(this, index));
 		const options = this.getNodeParameter('options', index, {});
 		const ignore_consistency_check = (options.ignore_consistency_check as boolean) || true;
 		const user_id_type = (options.user_id_type as string) || 'open_id';

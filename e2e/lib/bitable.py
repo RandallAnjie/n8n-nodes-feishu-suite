@@ -106,6 +106,19 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"needs": need("app_token"),
 		},
 		{
+			"id": "space.SubscribeBitable",
+			"resource": "space",
+			"operation": "subscribeFile",
+			"params": lambda ctx: {
+				"file_token": ctx["app_token"],
+				"file_type": "bitable",
+			}
+			if ctx.get("app_token")
+			else None,
+			"needs": need("app_token"),
+			"optional": True,
+		},
+		{
 			"id": "base.ParseUrl",
 			"resource": "base",
 			"operation": "parseBitableUrl",
@@ -253,6 +266,65 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"optional": True,
 		},
 		{
+			"id": "base.FieldCreateDuplex",
+			"resource": "base",
+			"operation": "createField",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {
+					"field_name": "Duplex",
+					"type": FIELD_DUPLEX,
+					"property": {
+						"multiple": True,
+						"table_id": ctx["link_table_id"],
+						"back_field_name": f"FromMain-{ctx['stamp']}",
+					},
+				},
+			}
+			if ctx.get("table_id") and ctx.get("link_table_id")
+			else None,
+			"needs": ["table_id", "link_table_id"],
+			"optional": True,
+		},
+		{
+			"id": "base.FieldCreateLookup",
+			"resource": "base",
+			"operation": "createField",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {
+					"field_name": "LookupTitle",
+					"type": FIELD_LOOKUP,
+					"ui_type": "Lookup",
+					"property": {
+						"filter_info": {
+							"target_table": ctx["link_table_id"],
+							"filter_info": {"conjunction": "and", "conditions": []},
+						}
+					},
+				},
+			}
+			if ctx.get("table_id") and ctx.get("link_table_id")
+			else None,
+			"needs": ["table_id", "link_table_id"],
+			"optional": True,
+		},
+		{
+			"id": "contacts.UserListForBitable",
+			"resource": "contacts",
+			"operation": "listUsers",
+			"params": lambda ctx: {
+				"department_id": "0",
+				"user_id_type": "open_id",
+				"returnAll": False,
+				"limit": 5,
+			},
+			"optional": True,
+			"save": {"person_open_id": "items[0].open_id|users[0].open_id|open_id"},
+		},
+		{
 			"id": "base.FieldCreate",
 			"resource": "base",
 			"operation": "createField",
@@ -337,6 +409,82 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"save": {"record_id": "record.record_id|record_id"},
 		},
 		{
+			"id": "base.RecordCreateLinkRow",
+			"resource": "base",
+			"operation": "createRecord",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["link_table_id"]),
+				"body": {"fields": {"Title": f"link-{ctx['stamp']}"}},
+			}
+			if ctx.get("link_table_id")
+			else None,
+			"needs": need("link_table_id"),
+			"save": {"link_record_id": "record.record_id|record_id"},
+		},
+		{
+			"id": "base.RecordUpdateLinkAndLocation",
+			"resource": "base",
+			"operation": "updateRecord",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"record_id": ctx.get("record_id"),
+				"body": {
+					"fields": {
+						"Related": [ctx["link_record_id"]] if ctx.get("link_record_id") else [],
+						"Place": "116.397755,39.903179",
+						**({"Owner": ctx["person_open_id"]} if ctx.get("person_open_id") else {}),
+					}
+				},
+			}
+			if ctx.get("record_id")
+			else None,
+			"needs": need("record_id"),
+			"optional": True,
+		},
+		{
+			"id": "base.AttachmentUpload",
+			"resource": "base",
+			"operation": "uploadBitableAttachment",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"file_binary_field": "data",
+				"options": {
+					"write_record": True,
+					"record_id": ctx.get("record_id"),
+					"field_name": "Files",
+					"parent_type": "bitable_file",
+				},
+			}
+			if ctx.get("record_id")
+			else None,
+			"needs": need("record_id"),
+			"optional": True,
+			"binary": True,
+			"save": {"attach_file_token": "file_token"},
+		},
+		{
+			"id": "base.AttachmentDownload",
+			"resource": "base",
+			"operation": "downloadBitableAttachment",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"file_token": ctx["attach_file_token"],
+				"outputAsBinary": True,
+				"options": {
+					"table_id": rl(ctx["table_id"]),
+					"record_id": ctx.get("record_id"),
+					"field_name": "Files",
+				},
+			}
+			if ctx.get("attach_file_token")
+			else None,
+			"needs": ["attach_file_token"],
+			"optional": True,
+		},
+		{
 			"id": "base.RecordGet",
 			"resource": "base",
 			"operation": "getRecord",
@@ -364,13 +512,27 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"needs": need("record_id"),
 		},
 		{
+			"id": "base.RecordGetFormula",
+			"resource": "base",
+			"operation": "getRecord",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"record_id": ctx.get("record_id"),
+			}
+			if ctx.get("record_id")
+			else None,
+			"needs": need("record_id"),
+			"optional": True,
+		},
+		{
 			"id": "base.RecordExists",
 			"resource": "base",
 			"operation": "recordExists",
 			"params": lambda ctx: {
 				"app_token": rl(ctx["app_token"]),
 				"table_id": rl(ctx["table_id"]),
-				"field_name": "Name",
+				"field_name": {"__rl": True, "mode": "name", "value": "Name"},
 				"field_value": f"row-{ctx['stamp']}-upd",
 			}
 			if ctx.get("table_id")
@@ -384,7 +546,7 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"params": lambda ctx: {
 				"app_token": rl(ctx["app_token"]),
 				"table_id": rl(ctx["table_id"]),
-				"field_name": "Name",
+				"field_name": {"__rl": True, "mode": "name", "value": "Name"},
 				"field_value": f"row-{ctx['stamp']}-upsert",
 				"fields": {"Name": f"row-{ctx['stamp']}-upsert", "Amount": 7, "Status": "Todo"},
 			}
@@ -448,6 +610,64 @@ def bitable_steps() -> list[dict[str, Any]]:
 			if ctx.get("table_id")
 			else None,
 			"needs": need("table_id"),
+			"save": {"batch_record_ids": "records[].record_id|items[].record_id"},
+		},
+		{
+			"id": "base.RecordBatchUpdate",
+			"resource": "base",
+			"operation": "batchUpdateRecords",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {
+					"records": [
+						{"record_id": rid, "fields": {"Amount": 100}}
+						for rid in (ctx.get("batch_record_ids") or [])[:20]
+					]
+				},
+			}
+			if ctx.get("batch_record_ids")
+			else None,
+			"needs": ["batch_record_ids"],
+		},
+		{
+			"id": "base.RecordBatchCreate501",
+			"resource": "base",
+			"operation": "batchCreateRecords",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {
+					"records": [
+						{"fields": {"Name": f"chunk-{ctx['stamp']}-{i}", "Amount": i}}
+						for i in range(501)
+					]
+				},
+			}
+			if ctx.get("table_id")
+			else None,
+			"needs": need("table_id"),
+			"save": {"chunk_record_ids": "records[].record_id|items[].record_id"},
+		},
+		{
+			"id": "base.TableBatchCreate",
+			"resource": "base",
+			"operation": "batchCreateTables",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"body": {
+					"tables": [
+						{
+							"name": f"e2e_batch_{ctx['stamp']}",
+							"fields": [{"field_name": "Name", "type": FIELD_TEXT}],
+						}
+					]
+				},
+			}
+			if ctx.get("app_token")
+			else None,
+			"needs": need("app_token"),
+			"save": {"batch_table_id": "[0].table_id|table_ids[0]|table_id"},
 		},
 		{
 			"id": "base.RecordSearchPage",
@@ -508,7 +728,37 @@ def bitable_steps() -> list[dict[str, Any]]:
 			if ctx.get("app_token") and ctx.get("table_id")
 			else None,
 			"needs": need("app_token", "table_id"),
-			"save": {"role_id": "role_id"},
+			"save": {"role_id": "role.role_id|role_id"},
+		},
+		{
+			"id": "base.RoleUpdate",
+			"resource": "base",
+			"operation": "updateRole",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"role_id": rl(ctx["role_id"]),
+				"body": {
+					"role_name": f"e2e-role-{ctx['stamp']}-upd",
+					"table_roles": [{"table_id": ctx["table_id"], "table_perm": 1}],
+				},
+			}
+			if ctx.get("role_id")
+			else None,
+			"needs": need("role_id"),
+		},
+		{
+			"id": "base.MemberGetList",
+			"resource": "base",
+			"operation": "getMemberList",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"role_id": rl(ctx["role_id"]),
+				"whether_paging": False,
+			}
+			if ctx.get("role_id")
+			else None,
+			"needs": need("role_id"),
+			"optional": True,
 		},
 		{
 			"id": "base.RoleDelete",
@@ -521,6 +771,47 @@ def bitable_steps() -> list[dict[str, Any]]:
 			if ctx.get("role_id")
 			else None,
 			"needs": need("role_id"),
+			"cleanup": True,
+		},
+		{
+			"id": "base.RecordBatchDeleteChunk",
+			"resource": "base",
+			"operation": "batchDeleteRecords",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {"records": ctx.get("chunk_record_ids") or []},
+			}
+			if ctx.get("chunk_record_ids")
+			else None,
+			"needs": ["chunk_record_ids"],
+			"cleanup": True,
+		},
+		{
+			"id": "base.TableDeleteBatch",
+			"resource": "base",
+			"operation": "deleteTable",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["batch_table_id"]),
+			}
+			if ctx.get("batch_table_id")
+			else None,
+			"needs": ["batch_table_id"],
+			"cleanup": True,
+		},
+		{
+			"id": "space.UnsubscribeBitable",
+			"resource": "space",
+			"operation": "unsubscribeFile",
+			"params": lambda ctx: {
+				"file_token": ctx["app_token"],
+				"file_type": "bitable",
+			}
+			if ctx.get("app_token")
+			else None,
+			"needs": need("app_token"),
+			"optional": True,
 			"cleanup": True,
 		},
 		{

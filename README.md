@@ -4,7 +4,7 @@
 
 本仓库是**独立新仓库**，不是任何 GitHub fork。源码以普通文件方式从 MIT 上游拷贝后再改造：节点类型名与凭据类型名全部改为 `feishuSuite*` / `feishuSuiteApi` / `feishuSuiteOAuth2Api`，可与其他飞书/Lark 社区节点并存。
 
-当前共 **269** 个 ResourceFactory 操作（snae `@snae/n8n-nodes-feishu` v2.3.1 基线 178，净增 91）。
+当前共 **271** 个 ResourceFactory 操作（snae `@snae/n8n-nodes-feishu` v2.3.1 基线 178，净增 93）。
 
 ## 功能概览
 
@@ -38,7 +38,7 @@ cd ~/.n8n/nodes
 npm install n8n-nodes-feishu-suite
 # 或安装本地 tarball：
 # npm pack /path/to/n8n-nodes-feishu-suite
-# npm install ./n8n-nodes-feishu-suite-0.1.4.tgz
+# npm install ./n8n-nodes-feishu-suite-0.1.5.tgz
 ```
 
 然后重启 n8n。
@@ -85,7 +85,7 @@ npm 包通过 GitHub Release（`v*`）由 `release.yml` 发布。本地开发请
 | --- | ---: | ---: |
 | 消息 / 卡片 | 38 | 37 → 38（+1） |
 | 群组 | 17 | 17 → 17（+0） |
-| 多维表格 | 41 | 36 → 41（+5） |
+| 多维表格 | 43 | 36 → 43（+7） |
 | 文档 docx | 10 | 10 → 10（+0） |
 | 电子表格 | 26 | 24 → 26（+2） |
 | 云空间 | 20 | 12 → 20（+8） |
@@ -100,7 +100,7 @@ npm 包通过 GitHub Release（`v*`）由 `release.yml` 发布。本地开发请
 | 搜索 | 2 | 新增 |
 | 考勤 | 5 | 新增 |
 | Aily 智能伙伴 | 5 | 新增 |
-| **合计** | **269** | **178 → 269（+91）** |
+| **合计** | **271** | **178 → 271（+93）** |
 
 核对命令：
 
@@ -171,11 +171,13 @@ npm run enumerate
 - `ChatUpdate`
 - `ChatUpdateAnnouncement`
 
-### 多维表格（41）
+### 多维表格（43）
 - `AppCopy`
 - `AppCreate`
 - `AppGetInfo`
 - `AppUpdate`
+- `AttachmentDownload`
+- `AttachmentUpload`
 - `FieldBatchSave`
 - `FieldCreate`
 - `FieldDelete`

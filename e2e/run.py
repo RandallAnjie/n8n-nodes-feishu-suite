@@ -61,28 +61,50 @@ def lookup(obj: Any, path: str) -> Any:
 	return cur
 
 
+def collect_list(obj: Any, path: str) -> Any:
+	if "[]." not in path:
+		return None
+	arr_path, field = path.split("[].", 1)
+	arr = lookup(obj, arr_path) if arr_path else obj
+	if not isinstance(arr, list):
+		return None
+	out = []
+	for item in arr:
+		if isinstance(item, dict) and item.get(field):
+			out.append(item[field])
+	return out or None
+
+
 def save_from(json_obj: Any, spec: str) -> Any:
 	candidates: list[Any] = [json_obj]
 	if isinstance(json_obj, dict) and isinstance(json_obj.get("data"), dict):
 		candidates.append(json_obj["data"])
 	if isinstance(json_obj, list):
 		candidates.append({"items": json_obj})
+		candidates.append({"records": json_obj})
 		if json_obj:
 			candidates.append(json_obj[0])
 	for path in spec.split("|"):
 		for obj in candidates:
-			value = lookup(obj, path)
+			if "[]." in path:
+				value = collect_list(obj, path)
+			else:
+				value = lookup(obj, path)
 			if value:
 				return value
 	return None
 
 
 def pick_json(result: dict[str, Any]) -> dict[str, Any]:
+	items = result.get("items_json")
+	if isinstance(items, list) and items:
+		first = items[0] if isinstance(items[0], dict) else {}
+		return {"items": items, "records": items, **first}
 	raw = result.get("json")
 	if isinstance(raw, dict):
 		return raw
 	if isinstance(raw, list) and raw and isinstance(raw[0], dict):
-		return {"items": raw, **raw[0]}
+		return {"items": raw, "records": raw, **raw[0]}
 	return {}
 
 
@@ -135,7 +157,24 @@ def start_mock() -> tuple[ThreadingHTTPServer, str]:
 	return server, f"http://{host}:{port}"
 
 
-def run_op(client: N8nClient, cred_id: str, cred_name: str, resource: str, operation: str, params: dict[str, Any], continue_on_fail: bool = False) -> dict[str, Any]:
+def run_op(
+	client: N8nClient,
+	cred_id: str,
+	cred_name: str,
+	resource: str,
+	operation: str,
+	params: dict[str, Any],
+	continue_on_fail: bool = False,
+	binary: bool = False,
+) -> dict[str, Any]:
+	if binary:
+		return client.run_feishu_op_with_binary(
+			cred_id=cred_id,
+			cred_name=cred_name,
+			resource=resource,
+			operation=operation,
+			parameters=params,
+		)
 	return client.run_feishu_op(
 		cred_id=cred_id,
 		cred_name=cred_name,
@@ -495,7 +534,15 @@ def main() -> int:
 				)
 				continue
 			try:
-				result = run_op(client, cred_id, cred_name, step["resource"], step["operation"], params)
+				result = run_op(
+					client,
+					cred_id,
+					cred_name,
+					step["resource"],
+					step["operation"],
+					params,
+					binary=bool(step.get("binary")),
+				)
 			except Exception as err:
 				cases.append(
 					{
