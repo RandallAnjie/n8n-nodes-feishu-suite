@@ -54,6 +54,12 @@ describe('feishuError', () => {
 		expect(formatted.description).toMatch(/Document resource|document_id/);
 	});
 
+	it('explains Bitable URL field shape', () => {
+		const formatted = formatFeishuBusinessError(1254068, 'URLFieldConvFail', '');
+		expect(formatted.message).toMatch(/text.*link/i);
+		expect(formatted.description).toMatch(/字段名称/);
+	});
+
 	it('tells operators to publish a new version when scopes look granted', () => {
 		const formatted = formatFeishuBusinessError(
 			99991672,

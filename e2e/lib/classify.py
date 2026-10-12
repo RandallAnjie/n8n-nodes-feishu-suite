@@ -63,6 +63,8 @@ def classify_error(error_text: str) -> tuple[str, list[str]]:
 		return BLOCKED_RESOURCE, scopes
 	if '"run_nodes": []' in text or "'run_nodes': []" in text:
 		return BLOCKED_RESOURCE, scopes
+	if "99991663" in text or "how-to-fix-99991663" in text:
+		return BLOCKED_RESOURCE, scopes
 	return FAIL_BUG, scopes
 
 

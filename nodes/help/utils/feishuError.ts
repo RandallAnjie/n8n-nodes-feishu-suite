@@ -83,6 +83,20 @@ export function formatFeishuBusinessError(
 		};
 	}
 
+	if (code === 1254068 || /URLFieldConvFail/i.test(msg ?? '')) {
+		return {
+			message: `Bitable URL field value is invalid (code ${code}). Use {"text":"label","link":"https://..."}, not a bare string.`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'Hyperlink / URL 字段必须是 { text, link } 对象。记录 JSON 的键是字段名称，不是 field_id。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
 	if (
 		code === FEISHU_CONTACTS_NO_AUTHORITY_CODE ||
 		/no dept authority|no user authority/i.test(msg ?? '')

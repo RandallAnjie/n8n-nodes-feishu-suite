@@ -72,7 +72,7 @@ def sample_fields(stamp: str, due_ms: int) -> dict[str, Any]:
 		"Due": due_ms,
 		"Done": False,
 		"Phone": "13800138000",
-		"Website": "https://example.com",
+		"Website": {"text": "example", "link": "https://example.com"},
 	}
 
 
