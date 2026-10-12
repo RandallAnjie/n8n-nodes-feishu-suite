@@ -14,6 +14,13 @@ export default {
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
 		DESCRIPTIONS.TABLE_RECORD_ID,
+		{
+			displayName:
+				'Record JSON keys must be field names (字段名称), not field IDs. Date values are Unix milliseconds.',
+			name: 'bitableFieldsHint',
+			type: 'notice',
+			default: '',
+		},
 		DESCRIPTIONS.REQUEST_BODY,
 		{
 			displayName: WORDING.Options,

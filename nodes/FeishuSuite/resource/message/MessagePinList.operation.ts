@@ -41,8 +41,8 @@ export default {
 
 				const { data } = await RequestUtils.request.call(this, {
 					method: 'GET',
-					url: `/open-apis/im/v1/chats/${chat_id}/pins`,
-					qs,
+					url: '/open-apis/im/v1/pins',
+					qs: { ...qs, chat_id },
 				});
 				return data as IDataObject;
 			},

@@ -67,7 +67,7 @@ export default {
 			body.comment_setting = commentSetting;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'PUT',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/setting`,
 			body,

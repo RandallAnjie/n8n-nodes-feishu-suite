@@ -44,7 +44,7 @@ export default {
 			qs.page_token = pageToken;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'GET',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/members`,
 			qs,

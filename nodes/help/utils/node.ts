@@ -49,15 +49,18 @@ class NodeUtils {
 		};
 	}
 
-	static getNodeJsonData(
+		static getNodeJsonData(
 		data: IExecuteFunctions,
 		propertyName: string,
 		index: number,
 		failValue?: any,
 	): any {
 		const text = data.getNodeParameter(propertyName, index, failValue);
-		if (!text) {
+		if (text === undefined || text === null || text === '') {
 			return failValue;
+		}
+		if (typeof text === 'object') {
+			return text;
 		}
 		try {
 			return JSON.parse(text as string);
@@ -67,6 +70,41 @@ class NodeUtils {
 				`Can't parse [${propertyName}] JSON data: ${e.message}`,
 			);
 		}
+	}
+
+	/** Locator / string / `{ value }` from n8n resourceLocator fields. */
+	static getResourceId(
+		context: IExecuteFunctions,
+		propertyName: string,
+		index: number,
+		failValue = '',
+	): string {
+		const raw = context.getNodeParameter(propertyName, index, failValue, {
+			extractValue: true,
+		});
+		if (raw === undefined || raw === null || raw === '') {
+			return failValue;
+		}
+		if (typeof raw === 'object' && raw && 'value' in (raw as object)) {
+			return String((raw as { value?: unknown }).value ?? failValue);
+		}
+		return String(raw);
+	}
+
+	/** type:json defaults arrive as `'{}'`; Object.keys on that string is not empty. */
+	static getOptionalJsonObject(
+		data: IExecuteFunctions,
+		propertyName: string,
+		index: number,
+	): IDataObject | undefined {
+		const parsed = this.getNodeJsonData(data, propertyName, index, {});
+		if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+			return undefined;
+		}
+		if (Object.keys(parsed as object).length === 0) {
+			return undefined;
+		}
+		return parsed as IDataObject;
 	}
 
 	static getObjectData(

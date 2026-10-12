@@ -21,7 +21,7 @@ export default {
 				{ name: 'Text(文本)', value: 'text' },
 			],
 			required: true,
-			default: 'post',
+			default: 'text',
 		},
 		DESCRIPTIONS.MESSAGE_CONTENT,
 		{

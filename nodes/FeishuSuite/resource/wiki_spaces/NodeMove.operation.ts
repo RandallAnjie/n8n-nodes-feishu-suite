@@ -54,7 +54,7 @@ export default {
 			body.target_space_id = targetSpaceId;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'POST',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/nodes/${nodeToken}/move`,
 			body,

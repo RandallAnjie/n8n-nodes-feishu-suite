@@ -47,7 +47,7 @@ export default {
 		const spaceId = this.getNodeParameter('space_id', index) as string;
 		const lang = this.getNodeParameter('lang', index) as string;
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'GET',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}`,
 			qs: { lang },

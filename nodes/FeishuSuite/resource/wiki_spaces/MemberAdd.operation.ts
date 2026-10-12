@@ -77,7 +77,7 @@ export default {
 			qs.need_notification = needNotification;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'POST',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/members`,
 			body,

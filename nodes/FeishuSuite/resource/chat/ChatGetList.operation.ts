@@ -17,10 +17,10 @@ export default {
 			name: 'sort_type',
 			type: 'options',
 			options: [
-				{ name: 'By Active Time (按活跃时间)', value: 'ByActiveTime' },
-				{ name: 'By Create Time (按创建时间)', value: 'ByCreateTime' },
+				{ name: 'By Active Time (按活跃时间)', value: 'ByActiveTimeDesc' },
+				{ name: 'By Create Time (按创建时间)', value: 'ByCreateTimeAsc' },
 			],
-			default: 'ByActiveTime',
+			default: 'ByCreateTimeAsc',
 		},
 		...returnAllAndLimitOptions,
 		{
@@ -43,7 +43,13 @@ export default {
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject | IDataObject[]> {
 		const user_id_type = this.getNodeParameter('user_id_type', index, 'open_id') as string;
-		const sort_type = this.getNodeParameter('sort_type', index, 'ByActiveTime') as string;
+		const rawSort = this.getNodeParameter('sort_type', index, 'ByCreateTimeAsc') as string;
+		const sort_type =
+			rawSort === 'ByActiveTime'
+				? 'ByActiveTimeDesc'
+				: rawSort === 'ByCreateTime'
+					? 'ByCreateTimeAsc'
+					: rawSort;
 		const returnAll = this.getNodeParameter('returnAll', index, false) as boolean;
 		const options = this.getNodeParameter('options', index, {}) as IDataObject;
 		const page_token = (options.page_token as string) || '';

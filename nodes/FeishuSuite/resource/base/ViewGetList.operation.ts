@@ -73,8 +73,8 @@ export default {
 				url: `/open-apis/bitable/v1/apps/${app_token}/tables/${table_id}/views`,
 				qs: {
 					user_id_type,
-					page_token: pageToken,
 					page_size: pageSize,
+					...(pageToken && { page_token: pageToken }),
 				},
 			});
 

@@ -13,6 +13,13 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
+		{
+			displayName:
+				'Record JSON keys must be field names (字段名称), not field IDs. Date/Created Time values are Unix milliseconds. Typical tenant timezone: Asia/Shanghai.',
+			name: 'bitableFieldsHint',
+			type: 'notice',
+			default: '',
+		},
 		DESCRIPTIONS.REQUEST_BODY,
 		{
 			displayName: WORDING.Options,

@@ -1,6 +1,8 @@
 import { IDataObject, IExecuteFunctions, NodeOperationError } from 'n8n-workflow';
 import RequestUtils from '../../../help/utils/RequestUtils';
 import { ResourceOperation } from '../../../help/type/IResource';
+import { DESCRIPTIONS } from '../../../help/description';
+import { WORDING } from '../../../help/wording';
 import NodeUtils from '../../../help/utils/node';
 
 export default {
@@ -8,40 +10,19 @@ export default {
 	value: 'upsertRecord',
 	order: 96,
 	options: [
+		DESCRIPTIONS.BASE_APP_TOKEN,
+		DESCRIPTIONS.BASE_TABLE_ID,
 		{
-			displayName:
-				'<a target="_blank" href="https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-record/search">Open official document</a>',
-			name: 'notice',
-			type: 'notice',
-			default: '',
-		},
-		{
-			displayName: 'App Token',
-			name: 'app_token',
-			type: 'string',
-			required: true,
-			typeOptions: { password: true },
-			default: '',
-			description: 'Bitable app token',
-		},
-		{
-			displayName: 'Table ID',
-			name: 'table_id',
-			type: 'string',
-			required: true,
-			default: '',
-			description: 'Bitable table ID',
-		},
-		{
-			displayName: 'Match Field Name',
+			displayName: 'Match Field Name (匹配字段名称)',
 			name: 'field_name',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Field used to decide whether the record already exists',
+			description:
+				'Field *name* (字段名称), not field_id. Used to decide whether the record already exists.',
 		},
 		{
-			displayName: 'Match Field Value',
+			displayName: 'Match Field Value (匹配字段值)',
 			name: 'field_value',
 			type: 'string',
 			required: true,
@@ -49,33 +30,36 @@ export default {
 			description: 'Value compared against the match field',
 		},
 		{
-			displayName: 'Fields',
+			displayName: 'Fields (字段值 JSON)',
 			name: 'fields',
 			type: 'json',
 			required: true,
 			default: '{}',
 			description:
-				'JSON object of field name to value. Keys are mapped to table field names automatically.',
+				'JSON object of field *name* to value. Keys are field names, not field IDs. Date values are Unix milliseconds.',
 		},
 		{
-			displayName: 'User ID Type',
-			name: 'user_id_type',
-			type: 'options',
-			options: [
-				{ name: 'Open ID', value: 'open_id' },
-				{ name: 'Union ID', value: 'union_id' },
-				{ name: 'User ID', value: 'user_id' },
-			],
-			default: 'open_id',
-			description: 'ID type used in this request',
+			displayName: WORDING.Options,
+			name: 'options',
+			type: 'collection',
+			placeholder: WORDING.AddField,
+			default: {},
+			options: [DESCRIPTIONS.USER_ID_TYPE],
+		},
+		{
+			displayName: `<a target="_blank" href="https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-record/search">${WORDING.OpenDocument}</a>`,
+			name: 'notice',
+			type: 'notice',
+			default: '',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {
-		const app_token = this.getNodeParameter('app_token', index) as string;
-		const table_id = this.getNodeParameter('table_id', index) as string;
+		const app_token = NodeUtils.getResourceId(this, 'app_token', index);
+		const table_id = NodeUtils.getResourceId(this, 'table_id', index);
 		const field_name = this.getNodeParameter('field_name', index) as string;
 		const field_value = this.getNodeParameter('field_value', index) as string;
-		const user_id_type = this.getNodeParameter('user_id_type', index, 'open_id') as string;
+		const options = this.getNodeParameter('options', index, {}) as IDataObject;
+		const user_id_type = (options.user_id_type as string) || 'open_id';
 		const fields = NodeUtils.getNodeJsonData(this, 'fields', index, {}) as IDataObject;
 
 		if (!fields || Object.keys(fields).length === 0) {

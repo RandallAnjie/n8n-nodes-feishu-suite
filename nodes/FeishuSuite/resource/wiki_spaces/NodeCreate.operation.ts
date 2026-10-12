@@ -80,7 +80,7 @@ export default {
 		if (originNodeToken) body.origin_node_token = originNodeToken;
 		if (title) body.title = title;
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'POST',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/nodes`,
 			body,

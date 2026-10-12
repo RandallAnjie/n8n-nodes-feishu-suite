@@ -5,6 +5,7 @@ import { WORDING } from '../../../help/wording';
 import { OperationType } from '../../../help/type/enums';
 import { DESCRIPTIONS } from '../../../help/description';
 import { timeoutAndBatchingCollection } from '../../../help/utils/options';
+import NodeUtils from '../../../help/utils/node';
 
 export default {
 	name: WORDING.UpdateChat,
@@ -55,13 +56,13 @@ export default {
 		const chat_id = this.getNodeParameter('chat_id', index) as string;
 		const name = this.getNodeParameter('name', index, '') as string;
 		const description = this.getNodeParameter('description', index, '') as string;
-		const i18n_names = this.getNodeParameter('i18n_names', index, {}) as IDataObject;
+		const i18n_names = NodeUtils.getOptionalJsonObject(this, 'i18n_names', index);
 		const owner_id = this.getNodeParameter('owner_id', index, '') as string;
 
 		const body: IDataObject = {};
 		if (name) body.name = name;
 		if (description) body.description = description;
-		if (i18n_names && Object.keys(i18n_names).length > 0) body.i18n_names = i18n_names;
+		if (i18n_names) body.i18n_names = i18n_names;
 		if (owner_id) body.owner_id = owner_id;
 
 		const { data } = await RequestUtils.request.call(this, {

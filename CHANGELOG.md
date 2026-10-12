@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.4
+
+PoC / 生产交接前的真实 n8n 2.42.6 端到端扫过 269 个操作，并修了用户会踩到的坑。
+
+### 缺陷修复
+
+- **群列表 `sort_type`**：官方枚举是 `ByCreateTimeAsc` / `ByActiveTimeDesc`（[获取群列表](https://open.feishu.cn/document/server-docs/group/chat/list)）。旧值 `ByCreateTime` / `ByActiveTime` 会触发飞书 `99992402`
+- **置顶消息列表**：官方路径是 `GET /open-apis/im/v1/pins?chat_id=`，不是 `/im/v1/chats/{id}/pins`（后者 404）
+- **更新群 `i18n_names`**：n8n `type:json` 默认值是字符串 `'{}'`，`Object.keys` 当成非空后把 `"{}"` 发给飞书得到 `9499`
+- **获取单条多维表格记录 / Upsert / Exists / 批量保存字段**：与其它 Base 操作对齐，使用资源选择器 + `extractValue`，不再把 locator 对象写进 URL
+- **列出字段**：视图改为可选；空 `page_token` 不再放进 query（`RecordSearch` / `ViewGetList` 同样）
+- **任务评论**：补上 `task_guid` / `content` 一等字段；任务更新默认 body 带上必填的 `update_fields`
+- **编辑消息**：默认消息类型改为文本（原先默认富文本，用户只改 content 会 230001）
+- **token 过期 `99991663`**：n8n 以 HTTP 400 抛出、body 解析失败时也会清 token 再试一次
+
+### 错误文案
+
+- 缺 scope（`99991672`）写出权限名，并提示：若后台已勾选仍报错，需要**发布新版本** + 管理员授权 + 配置**数据范围**；`token_type=tenant` 表示应用身份
+- 通讯录 `40004 no dept authority` 按数据范围解释，不当成缺 API scope
+- 新群公告 `232097` 说明已是 Docx，旧 IM 公告接口不能操作
+
+### 多维表格 UX
+
+- 记录 JSON 的键必须是**字段名称**不是 field_id；日期是 Unix 毫秒；时区默认 Asia/Shanghai
+- `searchTableFieldNames` 选择器返回字段名（给 search/filter/upsert 用）
+- 批量新增提示官方上限 500 条
+
+### 仓库
+
+- `e2e/`：用 n8n REST 跑真实工作流（不直接 import 操作文件），分类 PASS / FAIL-bug / BLOCKED-missing-scope / BLOCKED-needs-resource / SKIPPED-unsafe
+- `docs/E2E_REPORT.md`、`docs/REQUIRED_SCOPES.md`、`docs/BITABLE_RECIPES.md`
+
 ## 0.1.3
 
 飞书 Open API 偶发 HTTP 5xx / 限流时自动重试，二进制指数退避，最多 5 次（合计最多 6 次尝试）。
