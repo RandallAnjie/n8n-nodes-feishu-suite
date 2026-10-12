@@ -1,6 +1,7 @@
 import { Logger, RequestHelperFunctions } from 'n8n-workflow';
 
 import WebSocket from 'ws';
+import { withFeishuRetry } from '../../help/utils/feishuRetry';
 import { EventDispatcher } from '../handler/event-handler';
 import * as protoBuf from '../proto-buf';
 import { WSConfig } from './ws-config';
@@ -66,19 +67,21 @@ export class WSClient {
 		const { appId, appSecret } = this.wsConfig.getClient();
 
 		try {
-			const response = await this.helpers.request({
-				method: 'POST',
-				url: this.wsConfig.wsConfigUrl,
-				body: {
-					AppID: appId,
-					AppSecret: appSecret,
-				},
-				// consumed by gateway
-				headers: {
-					locale: 'zh',
-				},
-				timeout: 15000,
-			});
+			const response = await withFeishuRetry(() =>
+				this.helpers.request({
+					method: 'POST',
+					url: this.wsConfig.wsConfigUrl,
+					body: {
+						AppID: appId,
+						AppSecret: appSecret,
+					},
+					// consumed by gateway
+					headers: {
+						locale: 'zh',
+					},
+					timeout: 15000,
+				}),
+			);
 
 			const {
 				code,

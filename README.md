@@ -15,6 +15,7 @@
 - 凭据：应用 `tenant_access_token`（App ID / App Secret）与用户 OAuth2；支持 `https://open.feishu.cn` 与 `https://open.larksuite.com`
 - 全部 Action 节点设置了 `usableAsTool`，可被 n8n AI Agent 当作工具
 - 运行时不再依赖 `glob`（改用 Node 内置 `fs.readdirSync`），避免 n8n UI 安装后找不到 `glob` 的已知失败
+- Open API 调用对 HTTP 5xx / 429 / 飞书限流码 `99991400` 以及瞬时网络错误自动重试（最多 5 次，二进制指数退避；可在节点 Request Options 关闭）
 
 ## 安装
 
@@ -35,7 +36,7 @@ cd ~/.n8n/nodes
 npm install n8n-nodes-feishu-suite
 # 或安装本地 tarball：
 # npm pack /path/to/n8n-nodes-feishu-suite
-# npm install ./n8n-nodes-feishu-suite-0.1.2.tgz
+# npm install ./n8n-nodes-feishu-suite-0.1.3.tgz
 ```
 
 然后重启 n8n。
@@ -51,7 +52,7 @@ npm run lint
 npm run enumerate
 ```
 
-**请勿** `npm publish`。本仓库只通过 Git / 本地 tarball 分发。
+npm 包通过 GitHub Release（`v*`）由 `release.yml` 发布。本地开发请用 tarball 或 `npm install n8n-nodes-feishu-suite`。
 
 ## 凭据
 
@@ -432,7 +433,7 @@ npm run enumerate
 - **MCP Tool List/Execute**：仅出现在 lark-global，不属于飞书 Open API，未移植
 - **考勤**：只覆盖组/班次/打卡记录/统计查询，未做排班规则、补卡审批等冷门接口
 - **邮箱附件流、会议室预定冲突检测、妙记列表**等更细的选项按「广度优先」未展开
-- **不发布到 npm**：按需求只维护 Git 仓库
+- npm 包由 GitHub Release（`v*`）触发 `release.yml` 发布；日常开发可用社区节点 UI 或本地 tarball
 
 ## 开发
 

@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.1.3
+
+飞书 Open API 偶发 HTTP 5xx / 限流时自动重试，二进制指数退避，最多 5 次（合计最多 6 次尝试）。
+
+所有走共享请求层的操作都会受益：`RequestUtils`、凭据 `preAuthentication`、凭据 Test、长连接 Trigger 拉 WS 配置，以及流式消息的 webhook `fetch`。任意 URL 文件下载（`UploadByUrl`）仍不走这套重试。
+
+### 何时重试
+
+- HTTP 5xx（500 / 502 / 503 / 504 等）
+- HTTP 429
+- 飞书业务限流码 `99991400`
+- 瞬时网络错误：`ECONNRESET` / `ETIMEDOUT` / `ECONNREFUSED` / `socket hang up`
+- 有 `Retry-After` 或 `x-ogw-ratelimit-reset` 时优先按该等待时间（上限 60s）
+
+不重试其它 4xx，也不重试普通飞书业务错误码（如缺 scope、参数错误）。token 过期码 `99991663` 仍在单次尝试内刷新后重发，不占用 5xx 重试次数。
+
+### 退避与配置
+
+- 默认 `1s * 2^attempt`（1s / 2s / 4s / 8s / 16s），带抖动，单次上限 30s
+- 常量见 `FEISHU_RETRY_DEFAULTS`
+- 各 Action 节点底部「Request Options」可关闭重试或改最大次数（默认开 / 5）
+
+### 其它
+
+- 发送消息等支持 `uuid` / `client_token` 的非幂等 POST，重试会复用同一次生成的幂等键
+- 二进制下载（云空间文件、妙记转写等）仍按原样返回 Buffer / ArrayBuffer
+
 ## 0.1.2
 
 继续修复 n8n 2.42.x 社区节点安装后「Feishu Suite API」凭据 Test 仍显示 `Couldn't connect with these settings — Request failed with status code 403`。

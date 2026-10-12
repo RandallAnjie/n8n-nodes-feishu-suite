@@ -11,9 +11,9 @@ function read(rel: string) {
 describe('Feishu Suite package', () => {
 	const pkg = JSON.parse(read('package.json'));
 
-	it('is version 0.1.2 with community-node metadata', () => {
+	it('is version 0.1.3 with community-node metadata', () => {
 		expect(pkg.name).toBe('n8n-nodes-feishu-suite');
-		expect(pkg.version).toBe('0.1.2');
+		expect(pkg.version).toBe('0.1.3');
 		expect(pkg.keywords).toContain('n8n-community-node-package');
 		expect(pkg.homepage).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite#readme');
 		expect(pkg.repository.url).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite.git');
@@ -64,6 +64,7 @@ describe('Feishu Suite package', () => {
 		expect(node).toContain("testedBy: 'feishuSuiteOAuth2ApiTest'");
 		expect(tests).toContain('testFeishuSuiteApiCredential');
 		expect(tests).toContain('helpers.request');
+		expect(tests).toContain('withFeishuRetry');
 		expect(helper).toContain('20005');
 		expect(helper).toContain('10003');
 		expect(helper).toContain('10014');
@@ -126,6 +127,26 @@ describe('Feishu Suite package', () => {
 		expect(src).not.toContain("name: 'Lark Webhook Trigger'");
 		expect(src).not.toContain('larkApi');
 		expect(src).not.toContain('larkOAuth2Api');
+	});
+
+	it('retries Feishu Open API calls from the shared request helpers', () => {
+		const requestUtils = read('nodes/help/utils/RequestUtils.ts');
+		const retry = read('nodes/help/utils/feishuRetry.ts');
+		const builder = read('nodes/help/builder/ResourceBuilder.ts');
+		const tenant = read('credentials/FeishuSuiteApi.credentials.ts');
+		const ws = read('nodes/lark-sdk/ws-client/index.ts');
+		expect(retry).toContain('maxRetries: 5');
+		expect(retry).toContain('99991400');
+		expect(retry).toContain('Retry-After');
+		expect(retry).toContain('x-ogw-ratelimit-reset');
+		expect(requestUtils).toContain('withFeishuRetry');
+		expect(requestUtils).toContain('ensureIdempotencyKey');
+		expect(requestUtils).toContain('returnFullResponse');
+		expect(tenant).toContain('withFeishuRetry');
+		expect(ws).toContain('withFeishuRetry');
+		expect(builder).toContain("name: 'requestOptions'");
+		expect(builder).toContain("name: 'retryEnabled'");
+		expect(builder).toContain("name: 'maxRetries'");
 	});
 });
 

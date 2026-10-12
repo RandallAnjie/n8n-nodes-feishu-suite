@@ -11,6 +11,7 @@ import {
 	interpretFeishuApiResponse,
 	resolveFeishuBaseUrl,
 } from './credentialBaseUrl';
+import { throwIfRetryableFeishuBody, unwrapHttpResponse, withFeishuRetry } from './feishuRetry';
 
 function fail(message: string): INodeCredentialTestResult {
 	return { status: 'Error', message };
@@ -40,18 +41,23 @@ export async function testFeishuSuiteApiCredential(
 	}
 
 	try {
-		const body = await this.helpers.request({
-			method: 'POST',
-			uri: tokenUrl,
-			body: {
-				app_id: appId,
-				app_secret: appSecret,
-			},
-			json: true,
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
+		const body = await withFeishuRetry(async () => {
+			const raw = await this.helpers.request({
+				method: 'POST',
+				uri: tokenUrl,
+				body: {
+					app_id: appId,
+					app_secret: appSecret,
+				},
+				json: true,
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			});
+			const unwrapped = unwrapHttpResponse(raw);
+			throwIfRetryableFeishuBody(unwrapped.body, unwrapped.headers);
+			return unwrapped.body;
 		});
 		const interpreted = interpretFeishuApiResponse(body);
 		if (!interpreted.ok) {
@@ -90,14 +96,19 @@ export async function testFeishuSuiteOAuth2Credential(
 	}
 
 	try {
-		const body = await this.helpers.request({
-			method: 'GET',
-			uri: userInfoUrl,
-			headers: {
-				Accept: 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			json: true,
+		const body = await withFeishuRetry(async () => {
+			const raw = await this.helpers.request({
+				method: 'GET',
+				uri: userInfoUrl,
+				headers: {
+					Accept: 'application/json',
+					Authorization: `Bearer ${accessToken}`,
+				},
+				json: true,
+			});
+			const unwrapped = unwrapHttpResponse(raw);
+			throwIfRetryableFeishuBody(unwrapped.body, unwrapped.headers);
+			return unwrapped.body;
 		});
 		const interpreted = interpretFeishuApiResponse(body);
 		if (!interpreted.ok) {

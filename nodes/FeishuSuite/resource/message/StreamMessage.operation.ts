@@ -17,6 +17,12 @@ import {
 import { DESCRIPTIONS } from '../../../help/description';
 import RequestUtils from '../../../help/utils/RequestUtils';
 import { parseJsonParameter } from '../../GenericFunctions';
+import {
+	createRetryableError,
+	isRetryableHttpStatus,
+	readNodeRetryPolicy,
+	withFeishuRetry,
+} from '../../../help/utils/feishuRetry';
 
 export default {
 	name: WORDING.SendStreamMessage,
@@ -148,26 +154,35 @@ export default {
 
 		const eventPromise = new Promise(async (resolve, reject) => {
 			try {
-				const response = await fetch(webhookUrl, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'text/plain',
-						...headers,
-					},
-					body: JSON.stringify(parseJsonParameter(requestBody, this.getNode(), index)),
-				});
+				const response = await withFeishuRetry(async () => {
+					const webhookResponse = await fetch(webhookUrl, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'text/plain',
+							...headers,
+						},
+						body: JSON.stringify(parseJsonParameter(requestBody, this.getNode(), index)),
+					});
 
-				if (!response.ok) {
-					const errorText = await response.text();
-					reject(
-						new NodeApiError(this.getNode(), {
+					if (!webhookResponse.ok) {
+						const errorText = await webhookResponse.text();
+						const status = webhookResponse.status;
+						if (isRetryableHttpStatus(status)) {
+							throw createRetryableError({
+								message: `Error when call webhook api. Error: ${errorText}`,
+								statusCode: status,
+								headers: Object.fromEntries(webhookResponse.headers.entries()),
+							});
+						}
+						throw new NodeApiError(this.getNode(), {
 							message: `Error when call webhook api. Error: ${errorText}`,
-							code: response.status,
-						}),
-					);
-					return;
-				}
+							code: status,
+						});
+					}
+
+					return webhookResponse;
+				}, readNodeRetryPolicy(this));
 
 				if (!response.body) {
 					reject(

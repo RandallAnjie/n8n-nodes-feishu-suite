@@ -94,6 +94,36 @@ class ResourceBuilder {
 			}
 		}
 
+		list.push({
+			displayName: 'Request Options',
+			name: 'requestOptions',
+			type: 'collection',
+			placeholder: 'Add Option',
+			default: {},
+			options: [
+				{
+					displayName: 'Retry Failed Requests',
+					name: 'retryEnabled',
+					type: 'boolean',
+					default: true,
+					description:
+						'Whether to retry Feishu Open API calls on HTTP 5xx, HTTP 429, rate-limit code 99991400, and transient network errors',
+				},
+				{
+					displayName: 'Max Retries',
+					name: 'maxRetries',
+					type: 'number',
+					default: 5,
+					typeOptions: {
+						minValue: 0,
+						maxValue: 8,
+					},
+					description:
+						'Number of retries after the first attempt. 5 means up to 6 attempts with binary exponential backoff.',
+				},
+			],
+		});
+
 		return list;
 	}
 
