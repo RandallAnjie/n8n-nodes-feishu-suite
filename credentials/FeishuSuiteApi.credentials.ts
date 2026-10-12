@@ -12,6 +12,11 @@ import {
 	formatCredentialHttpError,
 	formatFeishuAuthError,
 } from '../nodes/help/utils/credentialBaseUrl';
+import {
+	throwIfRetryableFeishuBody,
+	unwrapHttpResponse,
+	withFeishuRetry,
+} from '../nodes/help/utils/feishuRetry';
 
 export class FeishuSuiteApi implements ICredentialType {
 	name = Credentials.TenantToken;
@@ -98,19 +103,25 @@ export class FeishuSuiteApi implements ICredentialType {
 		const tokenUrl = feishuTenantTokenUrl(credentials);
 		let payload: { code?: number; msg?: string; tenant_access_token?: string };
 		try {
-			payload = (await this.helpers.httpRequest({
-				method: 'POST',
-				url: tokenUrl,
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: {
-					app_id: credentials.appid,
-					app_secret: credentials.appsecret,
-				},
-				json: true,
-			})) as { code?: number; msg?: string; tenant_access_token?: string };
+			payload = await withFeishuRetry(async () => {
+				const raw = await this.helpers.httpRequest({
+					method: 'POST',
+					url: tokenUrl,
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					body: {
+						app_id: credentials.appid,
+						app_secret: credentials.appsecret,
+					},
+					json: true,
+					returnFullResponse: true,
+				});
+				const { body, headers } = unwrapHttpResponse(raw);
+				throwIfRetryableFeishuBody(body, headers);
+				return body as { code?: number; msg?: string; tenant_access_token?: string };
+			});
 		} catch (error) {
 			throw new Error(formatCredentialHttpError(error, tokenUrl));
 		}
