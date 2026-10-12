@@ -17,3 +17,30 @@
 | [feishu-n8n-troubleshooting](feishu-n8n-troubleshooting/SKILL.md) | `99991672` / `40004` / `99992402` / 限流写冲突 / 时区对不上 |
 
 节点：统一节点 `Feishu Suite`（资源选 Base），或单独的 `Feishu Suite Base`。触发器用 `Feishu Suite Trigger`。
+
+## 安装到 Cursor / Claude Code
+
+本目录是技能原文。一键安装 / 更新 / 卸载脚本在 fork **[RandallAnjie/n8n-skills](https://github.com/RandallAnjie/n8n-skills#如何安装更新卸载)**（不要用上游 n8n-io/skills 的插件 marketplace，那里没有飞书技能）。
+
+macOS / Linux：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RandallAnjie/n8n-skills/main/install.sh | bash -s -- --tool cursor
+curl -fsSL https://raw.githubusercontent.com/RandallAnjie/n8n-skills/main/install.sh | bash -s -- --tool claude
+curl -fsSL https://raw.githubusercontent.com/RandallAnjie/n8n-skills/main/install.sh | bash -s -- --tool cursor --project
+curl -fsSL https://raw.githubusercontent.com/RandallAnjie/n8n-skills/main/install.sh | bash -s -- --tool cursor --only feishu
+```
+
+Windows（PowerShell）：
+
+```powershell
+irm https://raw.githubusercontent.com/RandallAnjie/n8n-skills/main/install.ps1 -OutFile install.ps1
+.\install.ps1 -Tool cursor
+.\install.ps1 -Tool claude
+.\install.ps1 -Tool cursor -Project .
+.\install.ps1 -Tool cursor -Only feishu
+```
+
+更新：再跑同一条命令。卸载：同样的命令加上 `--uninstall` / `-Uninstall`。只卸飞书技能时加 `--only feishu`。
+
+路径（已核对）：Claude Code 用户级 `~/.claude/skills/<name>/SKILL.md`、项目级 `<仓库>/.claude/skills/`；Cursor 用户级 `~/.cursor/skills/<name>/SKILL.md`、项目级 `<仓库>/.cursor/skills/`。安装器始终扁平（一技能一文件夹）。
