@@ -32,8 +32,9 @@ export default {
 			name: 'body',
 			type: 'json',
 			required: true,
-			default: '{"update_fields": []}',
-			description: 'Https://open.feishu.cn/document/task-v2/task/patch#requestBody',
+			default: '{"task":{"summary":""},"update_fields":["summary"]}',
+			description:
+				'Must include update_fields (the names of fields being changed) plus task. Example: {"task":{"summary":"new title"},"update_fields":["summary"]}. See https://open.feishu.cn/document/task-v2/task/patch',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {

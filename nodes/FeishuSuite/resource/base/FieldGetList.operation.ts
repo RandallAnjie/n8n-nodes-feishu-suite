@@ -15,7 +15,11 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
-		DESCRIPTIONS.TABLE_VIEW_ID,
+		{
+			...DESCRIPTIONS.TABLE_VIEW_ID,
+			required: false,
+			description: 'Optional. Leave empty to list every field in the table.',
+		},
 		{
 			displayName: WORDING.Options,
 			name: 'options',
@@ -53,7 +57,7 @@ export default {
 		const table_id = this.getNodeParameter('table_id', index, undefined, {
 			extractValue: true,
 		}) as string;
-		const view_id = this.getNodeParameter('view_id', index, undefined, {
+		const view_id = this.getNodeParameter('view_id', index, '', {
 			extractValue: true,
 		}) as string;
 		const options = this.getNodeParameter('options', index, {}) as IDataObject;
@@ -76,7 +80,7 @@ export default {
 				qs: {
 					text_field_as_array,
 					...(view_id && { view_id }),
-					page_token: pageToken,
+					...(pageToken && { page_token: pageToken }),
 					page_size: pageSize,
 				},
 			});

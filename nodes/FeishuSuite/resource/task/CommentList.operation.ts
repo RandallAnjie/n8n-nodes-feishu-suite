@@ -22,12 +22,12 @@ export default {
 			description: 'Resource type, usually task',
 		},
 		{
-			displayName: 'Resource ID',
+			displayName: 'Task GUID / Resource ID (任务 ID)',
 			name: 'resource_id',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Task GUID or other resource ID',
+			description: 'Task GUID (same value as task_guid on create/get)',
 		},
 		{
 			displayName: 'User ID Type',

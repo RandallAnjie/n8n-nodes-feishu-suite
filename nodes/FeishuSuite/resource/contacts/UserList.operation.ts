@@ -15,12 +15,13 @@ export default {
 			default: '',
 		},
 		{
-			displayName: 'Department ID',
+			displayName: 'Department ID (部门 ID)',
 			name: 'department_id',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Department ID whose users to list',
+			description:
+				'Department ID whose users to list. Root "0" still needs contacts data-range visibility for the bot.',
 		},
 		{
 			displayName: 'User ID Type',

@@ -16,6 +16,8 @@
 - 全部 Action 节点设置了 `usableAsTool`，可被 n8n AI Agent 当作工具
 - 运行时不再依赖 `glob`（改用 Node 内置 `fs.readdirSync`），避免 n8n UI 安装后找不到 `glob` 的已知失败
 - Open API 调用对 HTTP 5xx / 429 / 飞书限流码 `99991400` 以及瞬时网络错误自动重试（最多 5 次，二进制指数退避；可在节点 Request Options 关闭）
+- 缺 scope（`99991672`）会在错误里写出飞书返回的权限名，并提示发布新版本 / 配置数据范围；通讯录 `40004` 按数据权限而不是缺 scope 解释
+- PoC 主路径是**多维表格**：`Feishu Suite Base` / 统一节点的 Base 资源，字段选择器、字段名 vs 字段 ID、Asia/Shanghai 日期毫秒、批量最多 500 条。见 [docs/BITABLE_RECIPES.md](docs/BITABLE_RECIPES.md)
 
 ## 安装
 
@@ -36,7 +38,7 @@ cd ~/.n8n/nodes
 npm install n8n-nodes-feishu-suite
 # 或安装本地 tarball：
 # npm pack /path/to/n8n-nodes-feishu-suite
-# npm install ./n8n-nodes-feishu-suite-0.1.3.tgz
+# npm install ./n8n-nodes-feishu-suite-0.1.4.tgz
 ```
 
 然后重启 n8n。
@@ -442,7 +444,13 @@ npm install
 npm run build   # tsc + 图标
 npm run lint
 npm run enumerate
+npm test
+# 真实 n8n 2.42.x + 飞书租户（凭据只走环境变量，见 e2e/README.md）
+# export FEISHU_APP_ID=... FEISHU_APP_SECRET=...
+# npm run e2e && npm run e2e:matrix
 ```
+
+权限清单与开发者后台批量导入 JSON：[docs/REQUIRED_SCOPES.md](docs/REQUIRED_SCOPES.md)。端到端矩阵：[docs/E2E_REPORT.md](docs/E2E_REPORT.md)。
 
 架构与 `n8n-nodes-feishu-lite` / `@snae/n8n-nodes-feishu` 相同：每个操作一个文件，由 `ResourceFactory` 自动加载。
 

@@ -202,6 +202,28 @@ export class FeishuSuite implements INodeType {
 				};
 			},
 
+			async searchTableFieldNames(this: ILoadOptionsFunctions): Promise<INodeListSearchResult> {
+				const app_token = this.getNodeParameter('app_token', undefined, {
+					extractValue: true,
+				}) as string;
+				const table_id = this.getNodeParameter('table_id', undefined, {
+					extractValue: true,
+				}) as string;
+				const fields = await larkApiRequestTableFieldList.call(
+					this as unknown as IExecuteFunctions,
+					{
+						app_token,
+						table_id,
+					},
+				);
+				return {
+					results: fields.map((field) => ({
+						name: `${field.field_name as string} (${field.field_id as string})`,
+						value: field.field_name as string,
+					})),
+				};
+			},
+
 			async searchBaseRoles(this: ILoadOptionsFunctions): Promise<INodeListSearchResult> {
 				const app_token = this.getNodeParameter('app_token', undefined, {
 					extractValue: true,

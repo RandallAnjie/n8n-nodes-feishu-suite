@@ -13,6 +13,13 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
+		{
+			displayName:
+				'Body is `{ "records": [ { "fields": { "FieldName": value } } ] }`. Max 500 records per call. Keys are field names, not field IDs.',
+			name: 'bitableFieldsHint',
+			type: 'notice',
+			default: '',
+		},
 		DESCRIPTIONS.REQUEST_BODY,
 		{
 			displayName: WORDING.Options,

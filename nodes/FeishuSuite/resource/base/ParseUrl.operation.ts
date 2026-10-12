@@ -7,19 +7,23 @@ export default {
 	order: 40,
 	options: [
 		{
-			displayName: 'Bitable URL',
+			displayName: 'Bitable URL (多维表格链接)',
 			name: 'url',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Full Feishu or Lark bitable URL containing the app token and optional table ID',
+			description:
+				'Full Feishu or Lark bitable URL containing the app token and optional table / view IDs',
 		},
 	],
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {
 		const url = this.getNodeParameter('url', index) as string;
 		const appMatch = url.match(/\/(?:base|app)\/([a-zA-Z0-9]+)/);
 		if (!appMatch) {
-			throw new NodeOperationError(this.getNode(), 'Unable to parse app token from the URL');
+			throw new NodeOperationError(
+				this.getNode(),
+				'Unable to parse app token from the URL. Expected /base/{app_token} or /app/{app_token}.',
+			);
 		}
 		const tableMatch = url.match(/[?&]table=([a-zA-Z0-9]+)/);
 		const viewMatch = url.match(/[?&]view=([a-zA-Z0-9]+)/);

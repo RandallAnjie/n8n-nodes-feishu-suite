@@ -81,7 +81,7 @@ export default {
 			body.type = type;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'DELETE',
 			url: `/open-apis/wiki/v2/spaces/${spaceId}/members/${memberId}`,
 			body,

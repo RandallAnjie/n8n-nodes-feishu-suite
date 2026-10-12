@@ -48,7 +48,7 @@ export default {
 			qs.obj_type = objType;
 		}
 
-		return RequestUtils.request.call(this, {
+		return RequestUtils.requestData.call(this, {
 			method: 'GET',
 			url: '/open-apis/wiki/v2/spaces/get_node',
 			qs,

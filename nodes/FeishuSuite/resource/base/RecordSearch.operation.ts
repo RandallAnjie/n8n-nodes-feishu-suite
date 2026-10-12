@@ -56,10 +56,10 @@ export default {
 				url: `/open-apis/bitable/v1/apps/${app_token}/tables/${table_id}/records/search`,
 				qs: {
 					user_id_type,
-					page_token: pageToken,
 					page_size: pageSize,
+					...(pageToken && { page_token: pageToken }),
 				},
-				body,
+				body: body && Object.keys(body).length ? body : {},
 			});
 
 			hasMore = has_more;

@@ -11,9 +11,9 @@ function read(rel: string) {
 describe('Feishu Suite package', () => {
 	const pkg = JSON.parse(read('package.json'));
 
-	it('is version 0.1.3 with community-node metadata', () => {
+	it('is version 0.1.4 with community-node metadata', () => {
 		expect(pkg.name).toBe('n8n-nodes-feishu-suite');
-		expect(pkg.version).toBe('0.1.3');
+		expect(pkg.version).toBe('0.1.4');
 		expect(pkg.keywords).toContain('n8n-community-node-package');
 		expect(pkg.homepage).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite#readme');
 		expect(pkg.repository.url).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite.git');
@@ -142,6 +142,26 @@ describe('Feishu Suite package', () => {
 		expect(requestUtils).toContain('withFeishuRetry');
 		expect(requestUtils).toContain('ensureIdempotencyKey');
 		expect(requestUtils).toContain('returnFullResponse');
+		expect(requestUtils).toContain('requestData');
+		expect(requestUtils).toContain('formatFeishuBusinessError');
+		expect(read('nodes/help/utils/node.ts')).toContain("typeof text === 'object'");
+		expect(read('nodes/help/utils/node.ts')).toContain('getOptionalJsonObject');
+		expect(read('nodes/help/utils/node.ts')).toContain('getResourceId');
+		expect(read('nodes/FeishuSuite/resource/chat/ChatGetList.operation.ts')).toContain(
+			'ByActiveTimeDesc',
+		);
+		expect(read('nodes/FeishuSuite/resource/chat/ChatGetList.operation.ts')).toContain(
+			'ByCreateTimeAsc',
+		);
+		expect(read('nodes/FeishuSuite/resource/message/MessagePinList.operation.ts')).toContain(
+			"/open-apis/im/v1/pins",
+		);
+		expect(read('nodes/FeishuSuite/resource/base/RecordGet.operation.ts')).toContain(
+			'BASE_APP_TOKEN',
+		);
+		expect(read('nodes/FeishuSuite/resource/base/FieldGetList.operation.ts')).toContain(
+			'required: false',
+		);
 		expect(tenant).toContain('withFeishuRetry');
 		expect(ws).toContain('withFeishuRetry');
 		expect(builder).toContain("name: 'requestOptions'");

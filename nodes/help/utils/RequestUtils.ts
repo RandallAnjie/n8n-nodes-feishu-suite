@@ -13,6 +13,7 @@ import {
 	unwrapHttpResponse,
 	withFeishuRetry,
 } from './feishuRetry';
+import { formatFeishuBusinessError } from './feishuError';
 
 const TOKEN_EXPIRED_CODE = 99991663;
 
@@ -67,6 +68,15 @@ class RequestUtils {
 		const policy = readNodeRetryPolicy(this);
 
 		return withFeishuRetry(() => RequestUtils.executeOnce.call(this, options), policy);
+	}
+
+	/** Unwrap Feishu `{ code, msg, data }` so operations return `data` consistently. */
+	static async requestData(this: IExecuteFunctions, options: IHttpRequestOptions): Promise<any> {
+		const res = await RequestUtils.request.call(this, options);
+		if (res && typeof res === 'object' && 'data' in res) {
+			return (res as { data?: unknown }).data ?? {};
+		}
+		return res;
 	}
 
 	static async executeOnce(this: IExecuteFunctions, options: IHttpRequestOptions): Promise<any> {
@@ -125,6 +135,11 @@ class RequestUtils {
 					errorData = JSON.parse(Buffer.from(errorData as ArrayBuffer).toString('utf-8'));
 				}
 			} catch {
+				const message = String((error as { message?: string })?.message ?? '');
+				if (/99991663|how-to-fix-99991663/.test(message)) {
+					const raw = await RequestUtils.originRequest.call(this, requestOptions, true);
+					return RequestUtils.interpretSuccess.call(this, raw, requestOptions, false);
+				}
 				throw error;
 			}
 
@@ -137,6 +152,12 @@ class RequestUtils {
 				true,
 				error,
 			);
+		}
+
+		const message = String((error as { message?: string })?.message ?? '');
+		if (/99991663|how-to-fix-99991663/.test(message)) {
+			const raw = await RequestUtils.originRequest.call(this, requestOptions, true);
+			return RequestUtils.interpretSuccess.call(this, raw, requestOptions, false);
 		}
 
 		throw error;
@@ -171,6 +192,12 @@ class RequestUtils {
 			return body;
 		}
 
+		const formatted = formatFeishuBusinessError(
+			payload.code,
+			payload.msg,
+			payload.error?.troubleshooter,
+		);
+
 		if (payload.code === TOKEN_EXPIRED_CODE && allowTokenRefresh) {
 			const raw = await RequestUtils.originRequest.call(this, requestOptions, true);
 			return RequestUtils.interpretSuccess.call(this, raw, requestOptions, false);
@@ -178,7 +205,7 @@ class RequestUtils {
 
 		if (payload.code === FEISHU_RATE_LIMIT_CODE) {
 			throw createRetryableError({
-				message: `Request Feishu Suite API Error: ${payload.code}, ${payload.msg}`,
+				message: formatted.message,
 				statusCode: statusCode && isRetryableHttpStatus(statusCode) ? statusCode : 429,
 				feishuCode: payload.code,
 				headers,
@@ -187,7 +214,7 @@ class RequestUtils {
 
 		if (statusCode && isRetryableHttpStatus(statusCode)) {
 			throw createRetryableError({
-				message: `Request Feishu Suite API Error: ${payload.code}, ${payload.msg}`,
+				message: formatted.message,
 				statusCode,
 				feishuCode: payload.code,
 				headers,
@@ -195,8 +222,8 @@ class RequestUtils {
 		}
 
 		throw new NodeApiError(this.getNode(), (originalError ?? payload) as JsonObject, {
-			message: `Request Feishu Suite API Error: ${payload.code}, ${payload.msg}`,
-			description: payload.error?.troubleshooter || '',
+			message: formatted.message,
+			description: formatted.description,
 		});
 	}
 }
