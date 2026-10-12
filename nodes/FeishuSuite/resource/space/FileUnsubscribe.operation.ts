@@ -51,7 +51,7 @@ export default {
 		const file_type = this.getNodeParameter('file_type', index, 'docx') as string;
 		const event_type = this.getNodeParameter('event_type', index, '') as string;
 		const { data } = await RequestUtils.request.call(this, {
-			method: 'POST',
+			method: 'DELETE',
 			url: `/open-apis/drive/v1/files/${file_token}/delete_subscribe`,
 			qs: { file_type, event_type },
 		});
