@@ -89,7 +89,105 @@ export function formatFeishuBusinessError(
 			description: [
 				msg ? `Feishu: ${msg}` : '',
 				troubleshooter || '',
-				'Hyperlink / URL 字段必须是 { text, link } 对象。记录 JSON 的键是字段名称，不是 field_id。',
+				'Hyperlink / URL 字段必须是 { text, link } 对象。记录 JSON 的键是字段名称，不是 field_id。裸 https:// URL 字符串现在会自动转换。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254104 || /RecordAddOnceExceedLimit/i.test(msg ?? '')) {
+		return {
+			message: `Bitable batch exceeds the official 500-record limit (code ${code}).`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'批量新增 / 更新 / 删除单次最多 500 条。本节点会自动拆批；若仍看到此错误，请确认没有绕过节点直接调用。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254301 || /advanced permissions/i.test(msg ?? '') || /高级权限/.test(msg ?? '')) {
+		return {
+			message: `Bitable advanced permission is off or unsupported (code ${code}).`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'角色 / 协作者接口需要先 updateApp 打开 is_advanced。若已打开仍失败，可能是套餐不支持高级权限。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254066 || /UserFieldConvFail/i.test(msg ?? '')) {
+		return {
+			message: `Bitable person field value is invalid (code ${code}). Pass [{id: open_id}] and match user_id_type.`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'人员字段必须是数组 [{ "id": "ou_xxx" }]。open_id 不能跨应用混用。裸 ou_/on_ 字符串现在会自动包成数组。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254069 || /AttachFieldConvFail/i.test(msg ?? '')) {
+		return {
+			message: `Bitable attachment field value is invalid (code ${code}). Upload first, then write [{file_token}].`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'附件字段写 [{ "file_token": "boxcn..." }]。先用「上传附件到多维表格」拿到 file_token，文件必须属于当前 Base。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254064 || /DatetimeFieldConvFail/i.test(msg ?? '')) {
+		return {
+			message: `Bitable date field value is invalid (code ${code}). Use Unix milliseconds.`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'日期字段是 Unix 毫秒，不是 2026-10-12 字符串。节点会按 Asia/Shanghai 自动转换常见日期字符串。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254045 || /FieldNameNotFound/i.test(msg ?? '')) {
+		return {
+			message: `Bitable field name was not found (code ${code}). Use the field name, not field_id.`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'记录 JSON / filter / upsert 的键是字段名称。searchTableFieldNames 返回名称；searchTableFields 返回 field_id（给删除/更新字段用）。',
+			]
+				.filter(Boolean)
+				.join('\n'),
+			scopes,
+		};
+	}
+
+	if (code === 1254074 || /DuplexLinkFieldConvFail/i.test(msg ?? '')) {
+		return {
+			message: `Bitable duplex-link field must be a string array of record_ids (code ${code}).`,
+			description: [
+				msg ? `Feishu: ${msg}` : '',
+				troubleshooter || '',
+				'双向 / 单向关联写入 ["recXXX"]。公式和查找引用字段只读。',
 			]
 				.filter(Boolean)
 				.join('\n'),

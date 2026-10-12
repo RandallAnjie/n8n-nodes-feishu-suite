@@ -58,6 +58,9 @@ def classify_error(error_text: str) -> tuple[str, list[str]]:
 			"docx type chat announcement",
 			"No Webhook node found",
 			"BLOCKED-needs-resource",
+			"1254302",
+			"1254306",
+			"base plan limits",
 		)
 	):
 		return BLOCKED_RESOURCE, scopes

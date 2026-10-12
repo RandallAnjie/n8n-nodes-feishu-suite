@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import time
 from http.cookiejar import CookieJar
@@ -228,6 +229,7 @@ class N8nClient:
 			result["item_count"] = len(items)
 			if items:
 				result["json"] = scrub_obj(items[0].get("json") or {})
+				result["items_json"] = [scrub_obj(item.get("json") or {}) for item in items]
 				result["binary_keys"] = list((items[0].get("binary") or {}).keys())
 		return result
 
@@ -272,6 +274,84 @@ class N8nClient:
 					},
 				],
 				"connections": {"Start": {"main": [[{"node": node_name, "type": "main", "index": 0}]]}},
+				"settings": {"executionOrder": "v1"},
+			}
+		)
+		try:
+			exec_id = self.run_workflow(wf_id)
+			execution = self.wait_execution(exec_id)
+			return self.extract_node_result(execution, node_name)
+		finally:
+			try:
+				self.delete_workflow(wf_id)
+			except Exception:
+				pass
+
+	def run_feishu_op_with_binary(
+		self,
+		*,
+		cred_id: str,
+		cred_name: str,
+		resource: str,
+		operation: str,
+		parameters: dict[str, Any],
+		file_name: str = "e2e-note.txt",
+		file_text: str = "n8n-e2e-bitable-attachment\n",
+		mime_type: str = "text/plain",
+		node_name: str = "Feishu",
+	) -> dict[str, Any]:
+		payload_b64 = base64.b64encode(file_text.encode("utf-8")).decode("ascii")
+		js_code = (
+			"return [{ json: { fileName: "
+			+ json.dumps(file_name)
+			+ " }, binary: { data: { data: "
+			+ json.dumps(payload_b64)
+			+ ", mimeType: "
+			+ json.dumps(mime_type)
+			+ ", fileName: "
+			+ json.dumps(file_name)
+			+ " } } }];"
+		)
+		params = {
+			"authentication": "feishuSuiteApi",
+			"resource": resource,
+			"operation": operation,
+			**parameters,
+		}
+		wf_id = self.create_workflow(
+			{
+				"name": f"e2e-bin-{resource}-{operation}"[:80],
+				"nodes": [
+					{
+						"id": "start",
+						"name": "Start",
+						"type": "n8n-nodes-base.manualTrigger",
+						"typeVersion": 1,
+						"position": [0, 0],
+						"parameters": {},
+					},
+					{
+						"id": "seed",
+						"name": "Seed",
+						"type": "n8n-nodes-base.code",
+						"typeVersion": 2,
+						"position": [220, 0],
+						"parameters": {"jsCode": js_code},
+					},
+					{
+						"id": "feishu",
+						"name": node_name,
+						"type": "n8n-nodes-feishu-suite.feishuSuite",
+						"typeVersion": 1,
+						"position": [460, 0],
+						"parameters": params,
+						"credentials": {"feishuSuiteApi": {"id": cred_id, "name": cred_name}},
+					},
+				],
+				"connections": {
+					"Start": {"main": [[{"node": "Seed", "type": "main", "index": 0}]]},
+					"Seed": {"main": [[{"node": node_name, "type": "main", "index": 0}]]},
+				},
 				"settings": {"executionOrder": "v1"},
 			}
 		)

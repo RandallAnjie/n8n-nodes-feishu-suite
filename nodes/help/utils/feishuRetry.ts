@@ -2,6 +2,17 @@ import type { IDataObject, IExecuteFunctions, IHttpRequestOptions } from 'n8n-wo
 import { randomUUID } from 'crypto';
 
 export const FEISHU_RATE_LIMIT_CODE = 99991400;
+/** Bitable write/read transient codes that should use the same backoff as 99991400. */
+export const FEISHU_RETRYABLE_BUSINESS_CODES = [
+	FEISHU_RATE_LIMIT_CODE,
+	1254290, // TooManyRequest
+	1254291, // Write conflict
+	1254607, // Data not ready
+] as const;
+
+export function isRetryableFeishuBusinessCode(code?: number): boolean {
+	return typeof code === 'number' && FEISHU_RETRYABLE_BUSINESS_CODES.includes(code as (typeof FEISHU_RETRYABLE_BUSINESS_CODES)[number]);
+}
 
 export const FEISHU_RETRY_DEFAULTS = {
 	enabled: true,
@@ -163,7 +174,7 @@ export function isRetryableError(error: unknown): boolean {
 	if ((error as { feishuRetryable?: boolean })?.feishuRetryable) {
 		return true;
 	}
-	if (extractFeishuCode(error) === FEISHU_RATE_LIMIT_CODE) {
+	if (isRetryableFeishuBusinessCode(extractFeishuCode(error))) {
 		return true;
 	}
 	const status = extractHttpStatus(error);
@@ -340,11 +351,11 @@ export function throwIfRetryableFeishuBody(
 		return;
 	}
 	const payload = body as { code?: number; msg?: string };
-	if (payload.code === FEISHU_RATE_LIMIT_CODE) {
+	if (isRetryableFeishuBusinessCode(payload.code)) {
 		throw createRetryableError({
-			message: `Request Feishu Suite API Error: ${FEISHU_RATE_LIMIT_CODE}, ${payload.msg || 'rate limit'}`,
+			message: `Request Feishu Suite API Error: ${payload.code}, ${payload.msg || 'rate limit'}`,
 			statusCode: 429,
-			feishuCode: FEISHU_RATE_LIMIT_CODE,
+			feishuCode: payload.code,
 			headers,
 		});
 	}

@@ -4,6 +4,7 @@ import { ResourceOperation } from '../../../help/type/IResource';
 import { DESCRIPTIONS } from '../../../help/description';
 import { WORDING } from '../../../help/wording';
 import NodeUtils from '../../../help/utils/node';
+import { BITABLE_FIELD_TYPE_NOTICE } from '../../../help/utils/bitableRecord';
 
 export default {
 	name: 'Batch Save Fields (批量保存字段)',
@@ -18,8 +19,7 @@ export default {
 			type: 'json',
 			required: true,
 			default: '[]',
-			description:
-				'JSON array of field objects. Each item needs field_name and type; include field_id to update. See https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-field/guide',
+			description: `${BITABLE_FIELD_TYPE_NOTICE} 数组项含 field_name + type；带 field_id 则更新。`,
 		},
 		{
 			displayName: `<a target="_blank" href="https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-field/create">${WORDING.OpenDocument}</a>`,

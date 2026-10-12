@@ -16,6 +16,13 @@ export default {
 		DESCRIPTIONS.WHETHER_PAGING,
 		DESCRIPTIONS.PAGE_TOKEN,
 		DESCRIPTIONS.PAGE_SIZE,
+		{
+			displayName:
+				'filter / sort / field_names 必须用字段名称。whether_paging=false 时节点自动翻页。公式和查找引用只能读。',
+			name: 'bitableSearchHint',
+			type: 'notice',
+			default: '',
+		},
 		DESCRIPTIONS.REQUEST_BODY,
 		{
 			displayName: 'Options(选项)',

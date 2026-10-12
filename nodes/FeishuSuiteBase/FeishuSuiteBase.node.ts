@@ -18,6 +18,7 @@ import {
 	larkApiRequestTableViewList,
 } from '../FeishuSuite/GenericFunctions';
 import { sendAndWaitWebhook } from '../help/utils/webhook';
+import { formatFieldPickerLabel } from '../help/utils/bitableRecord';
 
 const resourceBuilder = ResourceFactory.build(require('path').resolve(__dirname, '..', 'FeishuSuite'));
 const BASE_RESOURCE = 'base';
@@ -47,7 +48,8 @@ export class FeishuSuiteBase implements INodeType {
 		group: ['input'],
 		version: [1],
 		defaultVersion: 1,
-		description: 'Lark Base/Bitable Operations (Apps, Tables, Records, Fields, Views, Roles, Members)',
+		description:
+			'飞书多维表格：应用/数据表/视图/字段/记录 CRUD、批量 500、筛选排序分页、角色权限、附件上传下载。usableAsTool for AI Agent.',
 		subtitle: '={{$parameter["operation"]}}',
 		defaults: {
 			name: 'Feishu Suite Base',
@@ -146,7 +148,7 @@ export class FeishuSuiteBase implements INodeType {
 				);
 				return {
 					results: fields.map((field) => ({
-						name: field.field_name as string,
+						name: formatFieldPickerLabel(field),
 						value: field.field_id as string,
 					})),
 				};
@@ -168,7 +170,7 @@ export class FeishuSuiteBase implements INodeType {
 				);
 				return {
 					results: fields.map((field) => ({
-						name: `${field.field_name as string} (${field.field_id as string})`,
+						name: formatFieldPickerLabel(field),
 						value: field.field_name as string,
 					})),
 				};

@@ -12,14 +12,7 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
-		{
-			displayName: 'Field Name (字段名称)',
-			name: 'field_name',
-			type: 'string',
-			required: true,
-			default: '',
-			description: 'Field *name* (字段名称), not field_id',
-		},
+		DESCRIPTIONS.TABLE_FIELD_NAME,
 		{
 			displayName: 'Field Value (字段值)',
 			name: 'field_value',
@@ -46,7 +39,7 @@ export default {
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {
 		const app_token = NodeUtils.getResourceId(this, 'app_token', index);
 		const table_id = NodeUtils.getResourceId(this, 'table_id', index);
-		const field_name = this.getNodeParameter('field_name', index) as string;
+		const field_name = NodeUtils.getResourceId(this, 'field_name', index);
 		const field_value = this.getNodeParameter('field_value', index) as string;
 		const options = this.getNodeParameter('options', index, {}) as IDataObject;
 		const user_id_type = (options.user_id_type as string) || 'open_id';

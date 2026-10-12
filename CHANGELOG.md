@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.5
+
+PoC 主路径是多维表格。这一版把 Base 做成最深的一条：字段值自动整形、批量自动拆 500、附件上传下载、角色/事件订阅，以及更清楚的中文报错。
+
+### 多维表格
+
+- **记录字段自动整形**：裸 `https://` 转 `{text,link}`；`2026-10-12` / ISO 按 **Asia/Shanghai** 转 Unix 毫秒；`ou_` / `on_` 转 `[{id}]`；`recXXX` 转关联数组；`boxcn…` 转 `[{file_token}]`；`"true"`/`"false"` 转布尔；`"lng,lat"` 地理位置
+- **批量超过 500 自动拆批**（新增 / 更新 / 删除），对应官方 `1254104 RecordAddOnceExceedLimit`
+- **上传 / 下载多维表格附件**（`uploadBitableAttachment` / `downloadBitableAttachment`）：走 `bitable_file` + `drive_route_token`，可选一步写入记录
+- 字段选择器显示 **名称 · 类型 (field_id)**；upsert / 判断存在改用 **字段名称** 选择器（`searchTableFieldNames`）
+- 创建字段 / 批量保存字段 / 查询记录补上中文 type 对照和「键是字段名」提示
+- 限流码 `1254290` / 写冲突 `1254291` / 数据未就绪 `1254607` 与 `99991400` 一样指数退避
+- 人员 `1254066`、附件 `1254069`、日期 `1254064`、字段名 `1254045`、双向关联 `1254074`、高级权限 `1254301`、批量 500 `1254104` 写出中文修法
+- `Feishu Suite Trigger` / `subscribeFile` 默认突出多维表格事件 `drive.file.bitable_record_changed_v1` / `bitable_field_changed_v1`
+
+### 仓库
+
+- e2e 加深：lookup / duplex / 地理位置写入 / 关联行 / 附件上传下载 / 公式回读 / 批量 501 拆批 / 角色更新 / 事件订阅
+- `docs/BITABLE_RECIPES.md` 补上附件、事件、500 拆批、字段名 vs ID
+
+当前合计 **271** 个操作。
+
 ## 0.1.4
 
 PoC / 生产交接前的真实 n8n 2.42.6 端到端扫过 269 个操作，并修了用户会踩到的坑。

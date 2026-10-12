@@ -4,6 +4,7 @@ import { ResourceOperation } from '../../../help/type/IResource';
 import { DESCRIPTIONS } from '../../../help/description';
 import { WORDING } from '../../../help/wording';
 import NodeUtils from '../../../help/utils/node';
+import { BITABLE_RECORD_HINT, normalizeFields } from '../../../help/utils/bitableRecord';
 
 export default {
 	name: 'Upsert Record (更新或新建记录)',
@@ -12,15 +13,7 @@ export default {
 	options: [
 		DESCRIPTIONS.BASE_APP_TOKEN,
 		DESCRIPTIONS.BASE_TABLE_ID,
-		{
-			displayName: 'Match Field Name (匹配字段名称)',
-			name: 'field_name',
-			type: 'string',
-			required: true,
-			default: '',
-			description:
-				'Field *name* (字段名称), not field_id. Used to decide whether the record already exists.',
-		},
+		DESCRIPTIONS.TABLE_FIELD_NAME,
 		{
 			displayName: 'Match Field Value (匹配字段值)',
 			name: 'field_value',
@@ -35,8 +28,7 @@ export default {
 			type: 'json',
 			required: true,
 			default: '{}',
-			description:
-				'JSON object of field *name* to value. Keys are field names, not field IDs. Date values are Unix milliseconds.',
+			description: BITABLE_RECORD_HINT,
 		},
 		{
 			displayName: WORDING.Options,
@@ -56,11 +48,13 @@ export default {
 	async call(this: IExecuteFunctions, index: number): Promise<IDataObject> {
 		const app_token = NodeUtils.getResourceId(this, 'app_token', index);
 		const table_id = NodeUtils.getResourceId(this, 'table_id', index);
-		const field_name = this.getNodeParameter('field_name', index) as string;
+		const field_name = NodeUtils.getResourceId(this, 'field_name', index);
 		const field_value = this.getNodeParameter('field_value', index) as string;
 		const options = this.getNodeParameter('options', index, {}) as IDataObject;
 		const user_id_type = (options.user_id_type as string) || 'open_id';
-		const fields = NodeUtils.getNodeJsonData(this, 'fields', index, {}) as IDataObject;
+		const fields = normalizeFields(
+			NodeUtils.getNodeJsonData(this, 'fields', index, {}) as IDataObject,
+		);
 
 		if (!fields || Object.keys(fields).length === 0) {
 			throw new NodeOperationError(this.getNode(), 'Fields must contain at least one key');

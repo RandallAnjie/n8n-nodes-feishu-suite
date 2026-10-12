@@ -9,7 +9,7 @@ Drives **n8n itself** (REST the editor uses) against a real Feishu tenant. Opera
 - HTTP 5xx retry via a local mock (503 twice, then 200)
 - Webhook trigger `url_verification` and long-connection trigger activate
 - Read ops first, then create-and-cleanup artifacts (bot-only chat, folder, bitable, docx, sheet, task)
-- Deep Bitable path (`bitable-lifecycle`): app/table/view/field/record CRUD, batch, search/filter/sort/paging, upsert, roles, field-name vs field-id, Asia/Shanghai timestamps
+- Deep Bitable path (`bitable-lifecycle`): app/table/view/field/record CRUD, every common field type (including duplex/lookup/location/person/attachment), batch 500 auto-chunk (501), search/filter/sort/paging, upsert, roles, field-name vs field-id, Asia/Shanghai timestamps, attachment upload/download, subscribe `bitable` events
 - Every ResourceFactory operation appears in the matrix as PASS / FAIL-bug / BLOCKED-missing-scope / BLOCKED-needs-resource / SKIPPED-unsafe
 
 ## Safety

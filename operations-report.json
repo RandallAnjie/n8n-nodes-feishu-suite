@@ -1,7 +1,7 @@
 {
-  "total": 269,
+  "total": 271,
   "snaeBaseline": 178,
-  "delta": 91,
+  "delta": 93,
   "modules": [
     {
       "resource": "aily",
@@ -52,14 +52,16 @@
     },
     {
       "resource": "base",
-      "count": 41,
+      "count": 43,
       "baseline": 36,
-      "delta": 5,
+      "delta": 7,
       "operations": [
         "AppCopy",
         "AppCreate",
         "AppGetInfo",
         "AppUpdate",
+        "AttachmentDownload",
+        "AttachmentUpload",
         "FieldBatchSave",
         "FieldCreate",
         "FieldDelete",

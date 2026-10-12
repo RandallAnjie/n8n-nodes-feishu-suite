@@ -11,9 +11,9 @@ function read(rel: string) {
 describe('Feishu Suite package', () => {
 	const pkg = JSON.parse(read('package.json'));
 
-	it('is version 0.1.4 with community-node metadata', () => {
+	it('is version 0.1.5 with community-node metadata', () => {
 		expect(pkg.name).toBe('n8n-nodes-feishu-suite');
-		expect(pkg.version).toBe('0.1.4');
+		expect(pkg.version).toBe('0.1.5');
 		expect(pkg.keywords).toContain('n8n-community-node-package');
 		expect(pkg.homepage).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite#readme');
 		expect(pkg.repository.url).toBe('https://github.com/RandallAnjie/n8n-nodes-feishu-suite.git');
@@ -162,6 +162,13 @@ describe('Feishu Suite package', () => {
 		expect(read('nodes/FeishuSuite/resource/base/FieldGetList.operation.ts')).toContain(
 			'required: false',
 		);
+		expect(read('nodes/help/utils/bitableRecord.ts')).toContain('BITABLE_BATCH_LIMIT = 500');
+		expect(read('nodes/FeishuSuite/resource/base/AttachmentUpload.operation.ts')).toContain(
+			'UploadBitableAttachment',
+		);
+		expect(read('nodes/FeishuSuite/resource/base/RecordBatchCreate.operation.ts')).toContain(
+			'chunkArray',
+		);
 		expect(tenant).toContain('withFeishuRetry');
 		expect(ws).toContain('withFeishuRetry');
 		expect(builder).toContain("name: 'requestOptions'");
@@ -182,7 +189,7 @@ describe('compiled ResourceFactory', () => {
 				(file) => file.endsWith('.js') && !file.endsWith('.d.ts'),
 			),
 		);
-		expect(compiledOps).toHaveLength(269);
+		expect(compiledOps).toHaveLength(271);
 		expect(existsSync(join(root, 'dist/credentials/lark_icon.svg'))).toBe(true);
 		expect(existsSync(join(basedir, 'lark_icon.svg'))).toBe(true);
 
@@ -199,7 +206,7 @@ process.stdout.write(JSON.stringify({
 		const loaded = JSON.parse(
 			execFileSync(process.execPath, ['-e', script], { cwd: root, encoding: 'utf8' }),
 		);
-		expect(loaded.count).toBe(269);
+		expect(loaded.count).toBe(271);
 		expect(loaded.resources).toEqual(resourceDirs);
 	});
 });

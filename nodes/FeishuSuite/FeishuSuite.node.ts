@@ -25,6 +25,7 @@ import {
 	larkApiRequestTableList,
 	larkApiRequestTableViewList,
 } from './GenericFunctions';
+import { formatFieldPickerLabel } from '../help/utils/bitableRecord';
 import RequestUtils from '../help/utils/RequestUtils';
 import { sendAndWaitWebhook } from '../help/utils/webhook';
 import {
@@ -196,7 +197,7 @@ export class FeishuSuite implements INodeType {
 				);
 				return {
 					results: fields.map((field) => ({
-						name: field.field_name as string,
+						name: formatFieldPickerLabel(field),
 						value: field.field_id as string,
 					})),
 				};
@@ -218,7 +219,7 @@ export class FeishuSuite implements INodeType {
 				);
 				return {
 					results: fields.map((field) => ({
-						name: `${field.field_name as string} (${field.field_id as string})`,
+						name: formatFieldPickerLabel(field),
 						value: field.field_name as string,
 					})),
 				};

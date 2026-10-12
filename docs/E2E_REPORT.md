@@ -1,6 +1,6 @@
 # E2E report (n8n 2.42.6 community package)
 
-Harness: `e2e/run.py` drives **n8n REST** (login → credentials → workflows → `/run` → execution data). It does not import operation files. Community node type: `n8n-nodes-feishu-suite.feishuSuite`. Package under test: **0.1.4** installed from a local tarball into `~/.n8n/nodes`.
+Harness: `e2e/run.py` drives **n8n REST** (login → credentials → workflows → `/run` → execution data). It does not import operation files. Community node type: `n8n-nodes-feishu-suite.feishuSuite`. Package under test: **0.1.5** installed from a local tarball into `~/.n8n/nodes`.
 
 Credentials: `FEISHU_APP_ID` / `FEISHU_APP_SECRET` only. Never logged.
 
@@ -26,37 +26,54 @@ python3 e2e/print_matrix.py
 
 Machine-readable matrix: `e2e/results/latest.json` (gitignored).
 
-## Latest counts (2026-10-12, n8n 2.42.6 / Node 24 / package 0.1.4)
+## Latest counts (2026-10-12, n8n 2.42.6 / Node 24 / package 0.1.5)
 
 | Status | Count |
 | --- | --- |
-| PASS | 90 |
+| PASS | 104 |
 | FAIL-bug | **0** |
 | BLOCKED-missing-scope | 9 |
-| BLOCKED-needs-resource | 167 |
+| BLOCKED-needs-resource | 163 |
 | SKIPPED-unsafe | 22 |
-| **Total** | **288** |
+| **Total** | **298** |
 
-UX cases that passed: credential Test, required-field validation, n8n expressions on chat name, `continueOnFail`, 5xx retry mock (503 ×2 then 200, 3 attempts), `usableAsTool` on Feishu Suite and Feishu Suite Base, long-connection trigger activate, Chinese labels present.
+UX cases that passed: credential Test, required-field validation, n8n expressions on chat name, `continueOnFail`, 5xx retry mock, `usableAsTool` on Feishu Suite and Feishu Suite Base, long-connection trigger activate, Chinese labels present.
 
 ## Bitable (PoC main path)
 
-All create-cleanup Bitable steps **PASS**, including:
+Create-cleanup Bitable steps **PASS**, including:
 
 - App create / get / parse URL / update (`is_advanced`, `time_zone=Asia/Shanghai`)
-- Table create (grid + link table) / list / delete link table
+- Table create (grid + link table) / list / batch create / delete extras
 - Field batch-save (text, number, single/multi select, date, checkbox, phone, URL, link)
-- Extra fields: formula, location, attachment, person, notes
-- Field list (view optional) / update / delete
-- View list / create / get / update / delete
-- Record create (field **names**, date as Unix ms, URL as `{text,link}`) / get / update / exists / upsert / search (filter+sort) / batch get / batch create (20; API max 500) / paged search / delete
-- Advanced-permission role list / create / delete
+- Extra fields: formula, location, attachment, person, duplex link, notes
+- Field list / update / delete; view CRUD
+- Record create (field **names**, date as Unix ms, URL as `{text,link}`) / get / update / exists / upsert / search (filter+sort) / batch get / batch create / **batch update** / **batch create 501 (auto-split at 500)** / paged search / batch delete / delete
+- Link-table row + unidirectional link write + location `"116.397755,39.903179"`
+- **Attachment upload + write-to-record + download** (binary through n8n Code → Feishu Suite Base)
+- Formula field read after Amount update
+- Advanced-permission role list / create / **update** / member list / delete
+- `subscribeFile` for `file_type=bitable` (record/field change events)
 
-Person / attachment **cells** were not written (need a real user or file token). Lookup / duplex-link writes were not exercised. Recipes: [BITABLE_RECIPES.md](BITABLE_RECIPES.md).
+Optional / blocked on this tenant (not product bugs):
+
+- **Lookup field create** — Feishu `99992402` `field validation failed` (official create-field body for type 19 is still picky; lookup remains read-only once created in the UI)
+- **Person cell write** — contacts `40004 no dept authority` (data range). Person *field* create PASSed
+- `unsubscribeFile` 404 after the app/folder was already torn down (subscribe itself PASSed)
+
+Recipes: [BITABLE_RECIPES.md](BITABLE_RECIPES.md).
 
 ## Missing scopes (Feishu `99991672` verbatim)
 
 The console can show “all permissions” while Open API still returns **应用尚未开通所需的应用身份权限** with `token_type=tenant`. That means the **published** version + tenant-admin grant (and data range) are what Feishu enforces, not the draft checkbox list.
+
+Verbatim from this tenant (chat.delete):
+
+```
+code=99991672
+msg=Access denied. One of the following scopes is required: [im:chat, im:chat:delete].应用尚未开通所需的应用身份权限：[im:chat, im:chat:delete]
+token_type=tenant
+```
 
 | Operation | Scopes Feishu listed (OR) |
 | --- | --- |
@@ -76,33 +93,25 @@ Full import JSON: [REQUIRED_SCOPES.md](REQUIRED_SCOPES.md).
 
 ## Other BLOCKED (not product bugs)
 
-- Contacts `40004 no dept authority` — data range, not API scope
-- Chat announcement `232097` — new groups use Docx; legacy IM announcement API cannot operate them
+- Contacts `40004 no dept authority` — data-range, not API scope
+- Chat announcement `232097` — new groups use Docx
 - `parseWebhook` — needs a parent n8n Webhook node
 - Webhook trigger `url_verification` — `/webhook/{id}` 404 on this instance
-- Wiki space info/members/children — list returned no `space_id` the bot can read
-- `task.CommentCreate` — workflow rejected before the node ran (`run_nodes=[]`)
-- Contacts search / suite message search — n8n HTTP 400 wrapping Feishu `99991663` after token refresh
-- Remaining 269-ops tail: needs a resource the harness did not create
+- Wiki space info/members/children — list returned no readable `space_id`
+- Remaining ops tail: needs a resource the harness did not create
 
-## Bugs fixed in 0.1.4 (were FAIL-bug on 0.1.3)
+## 0.1.5 product changes exercised live
 
-- Chat list `sort_type` official `ByCreateTimeAsc` / `ByActiveTimeDesc`
-- Pin list `GET /open-apis/im/v1/pins?chat_id=`
-- ChatUpdate `i18n_names` string `'{}'`
-- Bitable Get/Upsert/Exists/BatchSave locators + `extractValue`
-- Field list view optional; empty `page_token` omitted
-- Wiki ops unwrap `{code,msg,data}` via `requestData`
-- `getNodeJsonData` accepts already-parsed objects
-- Edit message default `text`
-- Task update default includes `update_fields`
-- Task comment first-class `task_guid` / `content`
-- Missing-scope / 40004 / 232097 / URL-field `1254068` messages
-- `99991663` refresh when n8n throws HTTP 400
+- URL / date / location / link field auto-shape
+- Batch 501 auto-chunk at official 500
+- Base-scoped attachment upload + download
+- Field-name locator on exists / upsert
+- Bitable event subscribe
+- Role update + member list
 
 ## Residual risk
 
-- **Leftover `n8n-e2e-*` groups** (including expression-name chats) cannot be deleted without `im:chat` or `im:chat:delete` on the **published** tenant token. Delete them in the admin console or grant those scopes and re-run.
-- Person / attachment record writes and duplex/lookup need extra tenant data.
+- **Leftover `n8n-e2e-*` groups** cannot be deleted without `im:chat` or `im:chat:delete` on the **published** tenant token.
+- Person cell writes need contacts data range; lookup field create needs a UI-valid type-19 property.
 - One live long-connection trigger per app.
 - Do not point the harness at production chats, approval definitions, or external mail.
