@@ -474,7 +474,7 @@ def bitable_steps() -> list[dict[str, Any]]:
 				"file_token": ctx["attach_file_token"],
 				"outputAsBinary": True,
 				"options": {
-					"table_id": rl(ctx["table_id"]),
+					"table_id": ctx["table_id"],
 					"record_id": ctx.get("record_id"),
 					"field_name": "Files",
 				},

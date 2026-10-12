@@ -44,15 +44,18 @@ export default {
 					description: 'Whether to write the file_token into the record attachment field after upload',
 				},
 				{
-					...DESCRIPTIONS.TABLE_RECORD_ID,
-					required: false,
+					displayName: '记录 ID（Record ID）',
+					name: 'record_id',
+					type: 'string',
+					default: '',
+					description: 'Optional record to attach the file to',
 				},
 				{
 					displayName: '附件字段名称（Attachment Field Name）',
 					name: 'field_name',
 					type: 'string',
 					default: '',
-					description: '附件字段的字段名称，不是 field_id',
+					description: 'Attachment field name, not field_id',
 				},
 				{
 					displayName: '上传类型（Parent Type）',

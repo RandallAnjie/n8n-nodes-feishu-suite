@@ -34,8 +34,19 @@ export default {
 			placeholder: WORDING.AddField,
 			default: {},
 			options: [
-				DESCRIPTIONS.BASE_TABLE_ID,
-				DESCRIPTIONS.TABLE_RECORD_ID,
+				{
+					displayName: '数据表 ID（Table ID）',
+					name: 'table_id',
+					type: 'string',
+					default: '',
+					description: 'Optional table_id used in the download extra payload',
+				},
+				{
+					displayName: '记录 ID（Record ID）',
+					name: 'record_id',
+					type: 'string',
+					default: '',
+				},
 				{
 					displayName: '附件字段名称（Attachment Field Name）',
 					name: 'field_name',
@@ -60,7 +71,9 @@ export default {
 		const table_id =
 			rawTable && typeof rawTable === 'object'
 				? String((rawTable as IDataObject).value ?? '')
-				: (rawTable as string | undefined);
+				: rawTable
+					? String(rawTable)
+					: undefined;
 		const record_id = options.record_id as string | undefined;
 		const field_name = options.field_name as string | undefined;
 
