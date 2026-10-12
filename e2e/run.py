@@ -309,15 +309,24 @@ def main() -> int:
 		mock.shutdown()
 
 	# usableAsTool is a node description flag
+	suite_src = (ROOT / "nodes/FeishuSuite/FeishuSuite.node.ts").read_text()
+	base_src = (ROOT / "nodes/FeishuSuiteBase/FeishuSuiteBase.node.ts").read_text()
 	cases.append(
 		{
 			"id": "ux.usableAsTool",
 			"resource": "feishuSuite",
 			"operation": "description",
-			"status": PASS
-			if "usableAsTool: true" in (ROOT / "nodes/FeishuSuite/FeishuSuite.node.ts").read_text()
-			else FAIL_BUG,
+			"status": PASS if "usableAsTool: true" in suite_src else FAIL_BUG,
 			"reason": "FeishuSuite.description.usableAsTool is true for AI Agent",
+		}
+	)
+	cases.append(
+		{
+			"id": "ux.usableAsToolBase",
+			"resource": "feishuSuiteBase",
+			"operation": "description",
+			"status": PASS if "usableAsTool: true" in base_src else FAIL_BUG,
+			"reason": "FeishuSuiteBase can be used as an AI Agent tool for Bitable",
 		}
 	)
 

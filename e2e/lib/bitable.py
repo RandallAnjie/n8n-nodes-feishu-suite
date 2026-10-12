@@ -207,6 +207,38 @@ def bitable_steps() -> list[dict[str, Any]]:
 			"optional": True,
 		},
 		{
+			"id": "base.FieldCreateLocation",
+			"resource": "base",
+			"operation": "createField",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {
+					"field_name": "Place",
+					"type": FIELD_LOCATION,
+					"property": {"location": {"input_type": "not_limit"}},
+				},
+			}
+			if ctx.get("table_id")
+			else None,
+			"needs": ["table_id"],
+			"optional": True,
+		},
+		{
+			"id": "base.FieldCreateAttachment",
+			"resource": "base",
+			"operation": "createField",
+			"params": lambda ctx: {
+				"app_token": rl(ctx["app_token"]),
+				"table_id": rl(ctx["table_id"]),
+				"body": {"field_name": "Files", "type": FIELD_ATTACHMENT},
+			}
+			if ctx.get("table_id")
+			else None,
+			"needs": ["table_id"],
+			"optional": True,
+		},
+		{
 			"id": "base.FieldCreatePerson",
 			"resource": "base",
 			"operation": "createField",
